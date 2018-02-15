@@ -6,6 +6,8 @@ public class Block : MonoBehaviour {
 	public bool Breakable = false;
 	public int X { private set; get; }
 	public int Y { private set; get; }
+	public string _Name;
+	public int Id;
 
 	public void SetPosition(int x, int y) {
 		X = x;
