@@ -1,26 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Models {
+    public struct Block {
+        public bool IsActive;
+        public int X,Y,Z;
 
-public class Block : MonoBehaviour {
-	public bool Breakable = false;
-	public int X { private set; get; }
-	public int Y { private set; get; }
-	public string _Name;
-	public int Id;
+        public Block(int x, int y, int z, bool active) {
+            X = x;
+            Y = y;
+            Z = z;
+            IsActive = active;
+        }
 
-	public void SetPosition(int x, int y) {
-		X = x;
-		Y = y;
-	}
-	
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
 }
