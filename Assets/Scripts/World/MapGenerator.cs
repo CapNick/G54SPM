@@ -5,12 +5,17 @@ namespace World {
 	public class MapGenerator : MonoBehaviour {
 		public GameObject ChunkPrefab;
 		
-		//map key information
-		public int Width;
-		public int Length;
 		
 		//generation variables
+		[Space, Header("Terrain Generation")]
 		public int Seed;
+		public int MapWidth;
+		public int MapHeight;
+		public float Scale;
+		public int Octaves;
+		public float Persistance;
+		public float Lacunarity;
+		public Vector2 Offset;
 		
 		
 		//stores the information on the map including; blocks, width, height, length and seed.
@@ -19,6 +24,9 @@ namespace World {
 		
 
 		public void Start() {
+			//create the random generation
+			float[,] map = Noise.GenerateNoiseMap(Seed, MapHeight, MapWidth, Scale, Octaves, Persistance, Lacunarity, Offset);
+			
 			Chunks = new List<Chunk>();
 			int chunkSizeX = ChunkPrefab.GetComponent<Chunk>().SizeX;
 			int chunkSizeZ = ChunkPrefab.GetComponent<Chunk>().SizeZ;
