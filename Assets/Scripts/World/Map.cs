@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-namespace World {
+﻿namespace World {
     //Container Class which holds the world information so that it can be saved easilly
     public class Map {
 

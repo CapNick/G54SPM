@@ -24,19 +24,62 @@ namespace World {
 			int chunkSizeZ = ChunkPrefab.GetComponent<Chunk>().SizeZ;
 			//set the map container for saving
 			//generate map
-			for (int x = 0; x < Length; x++) {
-				for (int z = 0; z < Width; z++) {
-						GameObject chunk = Instantiate(ChunkPrefab, new Vector3(x*chunkSizeX, 0, z*chunkSizeZ), transform.rotation);
+			
+			//center
+			GameObject chunk = Instantiate(ChunkPrefab, new Vector3(0*chunkSizeX, 0, 0*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 0 + ", " + 0;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			//front 
+			chunk = Instantiate(ChunkPrefab, new Vector3(1*chunkSizeX, 0, 0*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 1 + ", " + 0;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			//back
+			chunk = Instantiate(ChunkPrefab, new Vector3(-1*chunkSizeX, 0, 0*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + -1 + ", " + 0;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			//left 
+			chunk = Instantiate(ChunkPrefab, new Vector3(0*chunkSizeX, 0, 1*chunkSizeZ), transform.rotation);
 
-						chunk.transform.SetParent(transform);
-						chunk.name = "Chunk" + ":" + x + ", " + z;
-						Chunks.Add(chunk.GetComponent<Chunk>());
-//						Block block = blockGameObject.GetComponent<Block>();
-//						block.SetPosition(x,y,z);
-						
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 0 + ", " + 1;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			//right
+			chunk = Instantiate(ChunkPrefab, new Vector3(0*chunkSizeX, 0, -1*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 0 + ", " + -1;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			// front left 
+			chunk = Instantiate(ChunkPrefab, new Vector3(1*chunkSizeX, 0, 1*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 1 + ", " + 1;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			// front right
+			chunk = Instantiate(ChunkPrefab, new Vector3(1*chunkSizeX, 0, -1*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 1 + ", " + -1;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			// back left 
+			chunk = Instantiate(ChunkPrefab, new Vector3(-1*chunkSizeX, 0, 1*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 1 + ", " + 1;
+			Chunks.Add(chunk.GetComponent<Chunk>());
+			
+			// back right
+			chunk = Instantiate(ChunkPrefab, new Vector3(-1*chunkSizeX, 0, -1*chunkSizeZ), transform.rotation);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 1 + ", " + -1;
+			Chunks.Add(chunk.GetComponent<Chunk>());
 
-				}
-			}
 		}
 
 		public void Update() {
