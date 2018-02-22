@@ -38,6 +38,6 @@ public class CameraController : MonoBehaviour {
 		rotationx = Mathf.Clamp (rotationx, minimumX, maximumX);
 
 		transform.localEulerAngles = new Vector3 (0, rotationY, 0);
-		cam.transform.localEulerAngles = new Vector3 (-rotationx, rotationY, 0);
+		cam.transform.localEulerAngles = new Vector3 (-rotationx, 0, 0);
 	}
 }
