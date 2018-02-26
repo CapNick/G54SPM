@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour {
 	public Camera cam;
 
 	float rotationY = 0f;
-	float rotationx = 0f;
+	float rotationX = 0f;
 
 	// Use this for initialization
 	void Start () 
@@ -33,11 +33,15 @@ public class CameraController : MonoBehaviour {
 	void Update () 
 	{
 		rotationY += Input.GetAxis ("Mouse X") * sensitivityY;
-		rotationx += Input.GetAxis ("Mouse Y") * sensitivityX;
+		rotationX += Input.GetAxis ("Mouse Y") * sensitivityX;
 
-		rotationx = Mathf.Clamp (rotationx, minimumX, maximumX);
+		rotationX = Mathf.Clamp (rotationX, minimumX, maximumX);
 
 		transform.localEulerAngles = new Vector3 (0, rotationY, 0);
+<<<<<<< HEAD:Assets/Scripts/Player/CameraController.cs
 		cam.transform.localEulerAngles = new Vector3 (-rotationx, 0, 0);
+=======
+		cam.transform.localEulerAngles = new Vector3 (-rotationX, 0, 0);
+>>>>>>> PlayerInteraction:Assets/Scripts/CameraController.cs
 	}
 }
