@@ -38,10 +38,7 @@ public class CameraController : MonoBehaviour {
 		rotationX = Mathf.Clamp (rotationX, minimumX, maximumX);
 
 		transform.localEulerAngles = new Vector3 (0, rotationY, 0);
-<<<<<<< HEAD:Assets/Scripts/Player/CameraController.cs
-		cam.transform.localEulerAngles = new Vector3 (-rotationx, 0, 0);
-=======
+
 		cam.transform.localEulerAngles = new Vector3 (-rotationX, 0, 0);
->>>>>>> PlayerInteraction:Assets/Scripts/CameraController.cs
 	}
 }
