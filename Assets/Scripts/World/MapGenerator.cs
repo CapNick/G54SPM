@@ -8,84 +8,99 @@ namespace World {
 		
 		//generation variables
 		[Space, Header("Terrain Generation")]
-		public int Seed;
 		public int MapWidth;
 		public int MapHeight;
+		public int Seed;
 		public float Scale;
 		public int Octaves;
 		public float Persistance;
 		public float Lacunarity;
-		public Vector2 Offset;
+
+		[Space, Header("Chunk Information")]
+		public int ChunkLength = 16;
+		public int ChunkHeight = 16;
+		public int ChunkWidth = 16;
 		
 		
 		//stores the information on the map including; blocks, width, height, length and seed.
 
 		public List<Chunk> Chunks;
-		
+
+		public void Awake() {
+			
+		}
 
 		public void Start() {
 			//create the random generation
-			float[,] map = Noise.GenerateNoiseMap(Seed, MapHeight, MapWidth, Scale, Octaves, Persistance, Lacunarity, Offset);
 			
 			Chunks = new List<Chunk>();
-			int chunkSizeX = ChunkPrefab.GetComponent<Chunk>().SizeX;
-			int chunkSizeZ = ChunkPrefab.GetComponent<Chunk>().SizeZ;
 			//set the map container for saving
+			
 			//generate map
 			
 			//center
-			GameObject chunk = Instantiate(ChunkPrefab, new Vector3(0*chunkSizeX, 0, 0*chunkSizeZ), transform.rotation);
+			GameObject chunk = Instantiate(ChunkPrefab, new Vector3(0*ChunkLength, 0, 0*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 0 + ", " + 0;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(0*ChunkHeight,0*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
-			
 			//front 
-			chunk = Instantiate(ChunkPrefab, new Vector3(1*chunkSizeX, 0, 0*chunkSizeZ), transform.rotation);
+			chunk = Instantiate(ChunkPrefab, new Vector3(1*ChunkLength, 0, 0*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 1 + ", " + 0;
-			Chunks.Add(chunk.GetComponent<Chunk>());
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(1*ChunkHeight,0*ChunkWidth)));
 			
-			//back
-			chunk = Instantiate(ChunkPrefab, new Vector3(-1*chunkSizeX, 0, 0*chunkSizeZ), transform.rotation);
+			Chunks.Add(chunk.GetComponent<Chunk>());
+//			//back
+			chunk = Instantiate(ChunkPrefab, new Vector3(-1*ChunkLength, 0, 0*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + -1 + ", " + 0;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(-1*ChunkHeight,0*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
-			
-			//left 
-			chunk = Instantiate(ChunkPrefab, new Vector3(0*chunkSizeX, 0, 1*chunkSizeZ), transform.rotation);
-
+//			//left 
+			chunk = Instantiate(ChunkPrefab, new Vector3(0*ChunkLength, 0, 1*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 0 + ", " + 1;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(-1*ChunkHeight,0*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
-			
-			//right
-			chunk = Instantiate(ChunkPrefab, new Vector3(0*chunkSizeX, 0, -1*chunkSizeZ), transform.rotation);
+//			//right
+			chunk = Instantiate(ChunkPrefab, new Vector3(0*ChunkLength, 0, -1*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 0 + ", " + -1;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(0*ChunkHeight,-1*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
-			
-			// front left 
-			chunk = Instantiate(ChunkPrefab, new Vector3(1*chunkSizeX, 0, 1*chunkSizeZ), transform.rotation);
+//			// front left 
+			chunk = Instantiate(ChunkPrefab, new Vector3(1*ChunkLength, 0, 1*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 1 + ", " + 1;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(1*ChunkHeight,1*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
-			
-			// front right
-			chunk = Instantiate(ChunkPrefab, new Vector3(1*chunkSizeX, 0, -1*chunkSizeZ), transform.rotation);
+//			// front right
+			chunk = Instantiate(ChunkPrefab, new Vector3(1*ChunkLength, 0, -1*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 1 + ", " + -1;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(1*ChunkHeight,-1*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
-			
-			// back left 
-			chunk = Instantiate(ChunkPrefab, new Vector3(-1*chunkSizeX, 0, 1*chunkSizeZ), transform.rotation);
+//			// back left 
+			chunk = Instantiate(ChunkPrefab, new Vector3(-1*ChunkLength, 0, 1*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 1 + ", " + 1;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(-1*ChunkHeight,1*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
-			
-			// back right
-			chunk = Instantiate(ChunkPrefab, new Vector3(-1*chunkSizeX, 0, -1*chunkSizeZ), transform.rotation);
+//			// back right
+			chunk = Instantiate(ChunkPrefab, new Vector3(-1*ChunkLength, 0, -1*ChunkWidth), transform.rotation);
 			chunk.transform.SetParent(transform);
 			chunk.name = "Chunk" + ":" + 1 + ", " + -1;
+			chunk.GetComponent<Chunk>().SetUpChunk(ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(Noise.GenerateNoiseMap(MapHeight, MapWidth, Seed, Scale, Octaves, Persistance, Lacunarity, new Vector2(-1*ChunkHeight,-1*ChunkWidth)));
 			Chunks.Add(chunk.GetComponent<Chunk>());
 
 		}
@@ -93,6 +108,22 @@ namespace World {
 		public void Update() {
 			
 		}
-
+		
+		
+		//make sure these variables are not out of bounds
+		public void OnValidate() {
+			if (MapWidth < 1) {
+				MapWidth = 1;
+			}
+			if (MapHeight < 1) {
+				MapHeight = 1;
+			}
+			if (Lacunarity < 1) {
+				Lacunarity = 1;
+			}
+			if (Octaves < 0) {
+				Octaves = 0;
+			}
+		}
 	}
 }
