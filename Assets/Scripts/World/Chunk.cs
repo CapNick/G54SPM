@@ -6,6 +6,9 @@ namespace World {
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class Chunk : MonoBehaviour {
 
+        public int X;
+        public int Z;
+        
         private int _sizeX;
         private int _sizeY;
         private int _sizeZ;
@@ -25,11 +28,19 @@ namespace World {
         private List<Vector2Int> _textures;
 
       
-        public void SetUpChunk(int sizeX, int sizeY, int sizeZ) {
+        public void SetUpChunk(int x, int z, int sizeX, int sizeY, int sizeZ) {
+            //set position of chunk
+
+            //save world position
+            X = x;
+            Z = z;
+            transform.position = new Vector3(x * sizeX,0,z * sizeZ);
+
+            
             //set chunk dimension
             _sizeX = sizeX;
-            _sizeZ = sizeY;
-            _sizeY = sizeZ;
+            _sizeY = sizeY;
+            _sizeZ = sizeZ;
             
             //block array
             _blocks = new Block[_sizeX,_sizeY,_sizeZ];
@@ -39,27 +50,20 @@ namespace World {
             _textures = new List<Vector2Int>();
             _collider = GetComponent<MeshCollider> ();
             PoulateTextures();
-            
+            CreateBlocks();
         }
         
         public void GenerateChunk(float[,] generatedNoiseMap) {
-            
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
-//                        Debug.Log("Making Block At: "+x+", "+y+", "+z+" ");
-//                        Debug.Log(Math.Ceiling(generatedNoiseMap[x, z]* _sizeY) >= y);
-//                        _blocks[x,y,z] = new Block(x,y,z,31);
-                        
-                        
-                        
                         
                         if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY)  <= y) {
-                            _blocks[x,y,z] = new Block(x,y,z,0);
+                            _blocks[x,y,z].Id = 0;
 //                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" FALSE");
                         }
                         else {
-                            _blocks[x,y,z] = new Block(x,y,z,31);
+                            _blocks[x,y,z].Id = 31;
 //                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");
                         }
                     }
@@ -68,6 +72,7 @@ namespace World {
 
             CreateMesh();
         }
+        
         
         
         //load in textures from atlas
@@ -100,6 +105,12 @@ namespace World {
         }
 
         private void CreateMesh() {
+            _verticies.Clear();
+            _triangles.Clear();
+            _uvs.Clear();
+            _mesh = GetComponent<MeshFilter>().mesh;
+            _mesh.Clear();
+            
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
@@ -134,8 +145,7 @@ namespace World {
                 }
             }
             
-            _mesh = GetComponent<MeshFilter>().mesh;
-            _mesh.Clear();
+            
             _mesh.vertices = _verticies.ToArray();
             _mesh.triangles = _triangles.ToArray();
             _mesh.uv = _uvs.ToArray();
