@@ -1,0 +1,42 @@
+[
+	{
+		"id": 0, 
+		"_name": "air", 
+		"BottomId": 0,
+		"TopId": 0,
+		"FrontId": 0,
+		"BackId": 0,
+		"LeftId": 0,
+		"RightId": 0 
+	},
+	{
+		"id": 1, 
+		"_name": "stone", 
+		"BottomId": 0,
+		"TopId": 0,
+		"FrontId": 0,
+		"BackId": 0,
+		"LeftId": 0,
+		"RightId": 0 
+	},
+	{
+		"id": 2, 
+		"_name": "dirt", 
+		"BottomId": 0,
+		"TopId": 0,
+		"FrontId": 0,
+		"BackId": 0,
+		"LeftId": 0,
+		"RightId": 0 
+	},
+	{
+		"id": 3, 
+		"_name": "grass", 
+		"BottomId": 0,
+		"TopId": 0,
+		"FrontId": 0,
+		"BackId": 0,
+		"LeftId": 0,
+		"RightId": 0 
+	},
+]

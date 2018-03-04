@@ -63,7 +63,7 @@ namespace World {
 //                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" FALSE");
                         }
                         else {
-                            _blocks[x,y,z].Id = 31;
+                            _blocks[x,y,z].Id = 47;
 //                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");
                         }
                     }
@@ -91,7 +91,7 @@ namespace World {
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
-                        _blocks[x,y,z] = new Block(x,y,z, 0);
+                        _blocks[x,y,z] = new Block(x,y,z, 0, false);
                     }
                 }
             }
@@ -101,7 +101,7 @@ namespace World {
             if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
                 return _blocks[x, y, z];
             }
-            return new Block(-1,-1,-1, 0);
+            return new Block(-1,-1,-1, 0, false);
         }
 
         private void CreateMesh() {
@@ -122,23 +122,23 @@ namespace World {
                             }
 
                             if (GetBlock(x,y,z-1).Id == 0) {
-                                CreateCubeLeft(x, y, z, block.Id);
+                                CreateCubeLeft(x, y, z, 63);
                             }
 
                             if (GetBlock(x-1,y,z).Id == 0) {
-                                CreateCubeFront(x, y, z, block.Id);
+                                CreateCubeFront(x, y, z, 63);
                             }
 
                             if (GetBlock(x+1,y,z).Id == 0) {
-                                CreateCubeBack(x, y, z, block.Id);
+                                CreateCubeBack(x, y, z, 63);
                             }
 
                             if (GetBlock(x,y,z+1).Id == 0) {
-                                CreateCubeRight(x, y, z, block.Id);
+                                CreateCubeRight(x, y, z, 63);
                             }
 
                             if (GetBlock(x,y+1,z).Id == 0) {
-                                CreateCubeTop(x, y, z, block.Id);
+                                CreateCubeTop(x, y, z, 15);
                             }
                         }
                     }
