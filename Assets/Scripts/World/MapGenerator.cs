@@ -32,7 +32,6 @@ namespace World {
 		//stores the information on the map including; blocks, width, height, length and seed.
 
 		public List<Chunk> Chunks;
-		public Dictionary<int, BlockType> BlockDictionary = new Dictionary<int, BlockType>();
 		private Block[,,] _blocks;
 		
 		public void Awake() {
@@ -41,7 +40,6 @@ namespace World {
 
 		public void Start() {
 			//create the random generation
-			BlockDictionary = new Dictionary<int, BlockType>();
 			Chunks = new List<Chunk>();
 			//set the map container for saving
 			GameObject chunk;

@@ -1,0 +1,152 @@
+[
+	{
+		"Id": 0, 
+		"_Name": "air", 
+		"BottomId": 0,
+		"TopId": 0,
+		"FrontId": 0,
+		"BackId": 0,
+		"LeftId": 0,
+		"RightId": 0 
+	},
+	{
+		"Id": 1, 
+		"_Name": "stone", 
+		"BottomId": 31,
+		"TopId": 31,
+		"FrontId": 31,
+		"BackId": 31,
+		"LeftId": 31,
+		"RightId": 31 
+	},
+	{
+		"Id": 2, 
+		"_Name": "dirt", 
+		"BottomId": 63,
+		"TopId": 63,
+		"FrontId": 63,
+		"BackId": 63,
+		"LeftId": 63,
+		"RightId": 63 
+	},
+	{
+		"Id": 3, 
+		"_Name": "grass", 
+		"BottomId": 63,
+		"TopId": 47,
+		"FrontId": 63,
+		"BackId": 63,
+		"LeftId": 63,
+		"RightId": 63 
+	},
+	{
+		"Id": 4, 
+		"_Name": "cobblestone", 
+		"BottomId": 14,
+		"TopId": 14,
+		"FrontId": 14,
+		"BackId": 14,
+		"LeftId": 14,
+		"RightId": 14 
+	},
+	{
+		"Id": 5, 
+		"_Name": "iron", 
+		"BottomId": 29,
+		"TopId": 29,
+		"FrontId": 29,
+		"BackId": 29,
+		"LeftId": 29,
+		"RightId": 29 
+	},
+	{
+		"Id": 6, 
+		"_Name": "gold", 
+		"BottomId": 13,
+		"TopId": 13,
+		"FrontId": 13,
+		"BackId": 13,
+		"LeftId": 13,
+		"RightId": 13 
+	},
+	{
+		"Id": 7, 
+		"_Name": "coal", 
+		"BottomId": 45,
+		"TopId": 45,
+		"FrontId": 45,
+		"BackId": 45,
+		"LeftId": 45,
+		"RightId": 45 
+	},
+	{
+		"Id": 8, 
+		"_Name": "diamond", 
+		"BottomId": 44,
+		"TopId": 44,
+		"FrontId": 44,
+		"BackId": 44,
+		"LeftId": 44,
+		"RightId": 44 
+	},
+	{
+		"Id": 9, 
+		"_Name": "oak log", 
+		"BottomId": 94,
+		"TopId": 94,
+		"FrontId": 78,
+		"BackId": 78,
+		"LeftId": 78,
+		"RightId": 78 
+	},
+	{
+		"Id": 10, 
+		"_Name": "wood planks", 
+		"BottomId": 79,
+		"TopId": 79,
+		"FrontId": 79,
+		"BackId": 79,
+		"LeftId": 79,
+		"RightId": 79 
+	},
+	{
+		"Id": 11, 
+		"_Name": "beadrock", 
+		"BottomId": 30,
+		"TopId": 30,
+		"FrontId": 30,
+		"BackId": 30,
+		"LeftId": 30,
+		"RightId": 30 
+	},
+	{
+		"Id": 12, 
+		"_Name": "obsIdian", 
+		"BottomId": 93,
+		"TopId": 93,
+		"FrontId": 93,
+		"BackId": 93,
+		"LeftId": 93,
+		"RightId": 93 
+	},
+	{
+		"Id": 13, 
+		"_Name": "sandstone", 
+		"BottomId": 2,
+		"TopId": 2,
+		"FrontId": 3,
+		"BackId": 3,
+		"LeftId": 3,
+		"RightId": 3 
+	},
+	{
+		"Id": 14, 
+		"_Name": "sandstone alt", 
+		"BottomId": 4,
+		"TopId": 4,
+		"FrontId": 4,
+		"BackId": 4,
+		"LeftId": 4,
+		"RightId": 4 
+	}
+]

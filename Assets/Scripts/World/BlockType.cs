@@ -1,4 +1,7 @@
-﻿namespace World {
+﻿using System;
+
+namespace World {
+    [Serializable]
     public struct BlockType {
         public int Id;
         public string _Name;
