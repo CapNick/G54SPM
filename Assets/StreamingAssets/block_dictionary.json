@@ -33,7 +33,7 @@
 		"Id": 3, 
 		"_Name": "grass", 
 		"BottomId": 63,
-		"TopId": 47,
+		"TopId": 15,
 		"FrontId": 63,
 		"BackId": 63,
 		"LeftId": 63,
@@ -121,7 +121,7 @@
 	},
 	{
 		"Id": 12, 
-		"_Name": "obsIdian", 
+		"_Name": "obsidian", 
 		"BottomId": 93,
 		"TopId": 93,
 		"FrontId": 93,

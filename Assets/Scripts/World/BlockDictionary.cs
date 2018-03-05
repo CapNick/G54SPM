@@ -1,23 +1,13 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace World {
-    public class BlockDictionary : MonoBehaviour {
-        public string Filename = "block_dictionary.json";
-        [ShowInInspector]
-        public Dictionary<int, BlockType> BlockDict { get; private set; } = new Dictionary<int, BlockType>();
-
-        // on awake load json file with each of the blocks
-        public void Awake() {
-            Debug.Log(LoadAllData());
-        }
-        
-        
-        public string LoadAllData () {
-            string filePath = Path.Combine(Application.streamingAssetsPath, Filename);
+    public static class BlockDictionary {
+        public static Dictionary<int, BlockType> LoadAllData (string filename) {
+            Dictionary<int, BlockType> blockDict = new Dictionary<int, BlockType>(); 
+            string filePath = Path.Combine(Application.streamingAssetsPath, filename);
             string _dataAsJson;
             List<BlockType> types;
             if (File.Exists(filePath)) {
@@ -26,13 +16,13 @@ namespace World {
                 types = JsonConvert.DeserializeObject<List<BlockType>>(_dataAsJson);
 
                 foreach (var blockType in types) {
-                    BlockDict.Add(blockType.Id, blockType);
+                    blockDict.Add(blockType.Id, blockType);
                 }
                 
-                return "BlockDictionary ==> Block Data Loaded Sucessfully";
+                return blockDict;
             }
             else {
-                return "BlockDictionary ==> ERROR ==>There was an issue with loading the block data";
+                return null;
             }
         }
         

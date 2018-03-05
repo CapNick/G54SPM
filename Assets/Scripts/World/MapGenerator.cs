@@ -31,8 +31,7 @@ namespace World {
 		
 		//stores the information on the map including; blocks, width, height, length and seed.
 
-		public List<Chunk> Chunks;
-		private Block[,,] _blocks;
+		public Map Map;
 		
 		public void Awake() {
 			
@@ -40,7 +39,7 @@ namespace World {
 
 		public void Start() {
 			//create the random generation
-			Chunks = new List<Chunk>();
+			
 			//set the map container for saving
 			GameObject chunk;
 			//generate map
@@ -49,17 +48,17 @@ namespace World {
 					chunk = Instantiate(ChunkPrefab);
 					chunk.transform.SetParent(transform);
 					chunk.name = "Chunk" + ":" + x + ", " + y;
-					chunk.GetComponent<Chunk>().SetUpChunk(x, y,ChunkLength, ChunkHeight, ChunkWidth );
+					chunk.GetComponent<Chunk>().SetUpChunk(Map, x, y,ChunkLength, ChunkHeight, ChunkWidth );
 					chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
-					Chunks.Add(chunk.GetComponent<Chunk>());
+					Map.Chunks.Add(chunk.GetComponent<Chunk>());
 				}
 			}
 		}
 
 		private void ReloadCHunks() {
-			if (Chunks.Count > 1) {
+			if (Map.Chunks.Count > 1) {
 
-				foreach (Chunk chun in Chunks) {
+				foreach (Chunk chun in Map.Chunks) {
 					int x = chun.X;
 					int y = chun.Z;
 					chun.GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));

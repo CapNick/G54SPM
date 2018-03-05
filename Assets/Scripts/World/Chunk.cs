@@ -16,6 +16,7 @@ namespace World {
         private readonly float BlockSize = 1;
         private readonly float TextureSize = 0.0625f;
         private Block[,,] _blocks;
+        private Map _map;
         
         //rendering
         private Mesh _mesh;
@@ -28,7 +29,10 @@ namespace World {
         private List<Vector2Int> _textures;
 
       
-        public void SetUpChunk(int x, int z, int sizeX, int sizeY, int sizeZ) {
+        public void SetUpChunk(Map map, int x, int z, int sizeX, int sizeY, int sizeZ) {
+            //give it the reference to the map object
+            _map = map;
+            
             //set position of chunk
 
             //save world position
@@ -59,11 +63,11 @@ namespace World {
                     for (int z = 0; z < _sizeZ; z++) {
                         
                         if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY)  <= y) {
-                            _blocks[x,y,z].Id = 0;
 //                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" FALSE");
                         }
                         else {
-                            _blocks[x,y,z].Id = 47;
+                            _blocks[x,y,z].IsActive = true;
+                            _blocks[x,y,z].Id = 3;
 //                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");
                         }
                     }
@@ -91,7 +95,7 @@ namespace World {
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
-                        _blocks[x,y,z] = new Block(x,y,z, 0, false);
+                        _blocks[x,y,z] = new Block(0, false);
                     }
                 }
             }
@@ -101,7 +105,7 @@ namespace World {
             if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
                 return _blocks[x, y, z];
             }
-            return new Block(-1,-1,-1, 0, false);
+            return new Block(0, false);
         }
 
         private void CreateMesh() {
@@ -116,29 +120,29 @@ namespace World {
                     for (int z = 0; z < _sizeZ; z++) {
                         Block block = _blocks[x, y, z];
 //                        Debug.Log("Creating Mesh at: "+x+", "+y+", "+z);
-                        if (block.Id != 0) {
-                            if (GetBlock(x,y-1,z).Id == 0) {
-                                CreateCubeBottom(x, y, z, block.Id);
+                        if (block.IsActive) {
+                            if (!GetBlock(x,y-1,z).IsActive) {
+                                CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
                             }
 
-                            if (GetBlock(x,y,z-1).Id == 0) {
-                                CreateCubeLeft(x, y, z, 63);
+                            if (!GetBlock(x,y,z-1).IsActive) {
+                                CreateCubeLeft(x, y, z, _map.BlockDict[block.Id].LeftId);
                             }
 
-                            if (GetBlock(x-1,y,z).Id == 0) {
-                                CreateCubeFront(x, y, z, 63);
+                            if (!GetBlock(x-1,y,z).IsActive) {
+                                CreateCubeFront(x, y, z, _map.BlockDict[block.Id].FrontId);
                             }
 
-                            if (GetBlock(x+1,y,z).Id == 0) {
-                                CreateCubeBack(x, y, z, 63);
+                            if (!GetBlock(x+1,y,z).IsActive) {
+                                CreateCubeBack(x, y, z, _map.BlockDict[block.Id].BackId);
                             }
 
-                            if (GetBlock(x,y,z+1).Id == 0) {
-                                CreateCubeRight(x, y, z, 63);
+                            if (!GetBlock(x,y,z+1).IsActive) {
+                                CreateCubeRight(x, y, z, _map.BlockDict[block.Id].RightId);
                             }
 
-                            if (GetBlock(x,y+1,z).Id == 0) {
-                                CreateCubeTop(x, y, z, 15);
+                            if (!GetBlock(x,y+1,z).IsActive) {
+                                CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
                             }
                         }
                     }
