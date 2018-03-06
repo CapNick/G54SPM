@@ -61,23 +61,49 @@ namespace World {
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
-                        
-                        if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY)  <= y) {
-//                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" FALSE");
-                        }
-                        else {
-                            _blocks[x,y,z].IsActive = true;
-                            _blocks[x,y,z].Id = 3;
-//                            Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");
+                        if (y != 0) {
+                            if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY)+64  >= y) {
+                                _blocks[x,y,z].IsActive = true;
+                                _blocks[x,y,z].Id = 1;
+//                           Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");
+//                           Debug.Log(""+Math.Ceiling(generatedNoiseMap[x, z] * _sizeY));
+                            }
                         }
                     }
                 }
             }
 
+            GrassifyChunk();
             CreateMesh();
         }
-        
-        
+
+        private void GrassifyChunk() {
+            int counter = 0;
+            for (int x = 0; x < _sizeX; x++) {
+                for (int z = 0; z < _sizeZ; z++) {
+                    for (int y = 0; y < _sizeY; y++) {
+                        if (GetBlock(x,y,z).IsActive && !GetBlock(x,y+1,z).IsActive) {
+                            //put the top 3rd and 2nd layer as dirt
+                            if (counter < 2) {
+                                _blocks[x,y+1,z].IsActive = true;
+                                _blocks[x,y+1,z].Id = 2;
+                                counter++;
+                            }
+                            //put the top layer as grass
+                            else if (counter < 3){
+                                _blocks[x,y+1,z].IsActive = true;
+                                _blocks[x,y+1,z].Id = 3;
+                                counter++;
+                            }
+                            else {
+                                counter = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         
         //load in textures from atlas
         private void PoulateTextures() {
@@ -87,15 +113,21 @@ namespace World {
                 }
             }
         }
-        
-        
 
         private void CreateBlocks() {
             //initalise the array of block structs
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
-                        _blocks[x,y,z] = new Block(0, false);
+                        if (y == 0) {
+                            _blocks[x,y,z] = new Block(11, true);
+                        }
+                        else if (y < 64) {
+                            _blocks[x,y,z] = new Block(1, true);
+                        }
+                        else {
+                            _blocks[x,y,z] = new Block(0, false);
+                        }
                     }
                 }
             }
@@ -119,9 +151,10 @@ namespace World {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
                         Block block = _blocks[x, y, z];
-//                        Debug.Log("Creating Mesh at: "+x+", "+y+", "+z);
                         if (block.IsActive) {
-                            if (!GetBlock(x,y-1,z).IsActive) {
+                            //TODO: Add checks for the side meshes too so they dont need to draw side faces if not needed
+                            //check the block below is not active and if it is also not the bottom of the world
+                            if (!GetBlock(x,y-1,z).IsActive && y != 0) {
                                 CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
                             }
 

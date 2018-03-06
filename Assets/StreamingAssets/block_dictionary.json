@@ -22,17 +22,17 @@
 	{
 		"Id": 2, 
 		"_Name": "dirt", 
-		"BottomId": 63,
-		"TopId": 63,
-		"FrontId": 63,
-		"BackId": 63,
-		"LeftId": 63,
-		"RightId": 63 
+		"BottomId": 47,
+		"TopId": 47,
+		"FrontId": 47,
+		"BackId": 47,
+		"LeftId": 47,
+		"RightId": 47 
 	},
 	{
 		"Id": 3, 
 		"_Name": "grass", 
-		"BottomId": 63,
+		"BottomId": 47,
 		"TopId": 15,
 		"FrontId": 63,
 		"BackId": 63,
