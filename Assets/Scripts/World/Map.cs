@@ -13,7 +13,7 @@ namespace World {
                 Debug.Log("BlockDictionary ==> Block Data Loaded Sucessfully");
             }
             else {
-                Debug.Log("BlockDictionary ==> ERROR ==>There was an issue with loading the block data");
+                Debug.Log("BlockDictionary ==> ERROR ==> There was an issue with loading the block data");
             }
         }
 

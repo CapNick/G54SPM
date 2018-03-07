@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace World {
     public static class NoiseGen {
-        public static float[,] GenerateSimplexHeightMap(int chunkSize, int seed, int octaves,
+        public static float[,] GenerateSimplexHeightMap(int chunkSize, int seed, NoiseMethodType type, int octaves,
             float persistance, float lacunarity, float strength, Vector3 offset) {
             float[,] noiseMap = new float[chunkSize,chunkSize];
 
-            NoiseMethodType type = NoiseMethodType.Simplex;
             int dimensions = 2;
             int frequency = 1;
             

@@ -62,7 +62,7 @@ namespace World {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
                         if (y != 0) {
-                            if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY)+64  >= y) {
+                            if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY) + 64  >= y) {
                                 _blocks[x,y,z].IsActive = true;
                                 _blocks[x,y,z].Id = 1;
 //                           Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");
@@ -74,6 +74,9 @@ namespace World {
             }
 
             GrassifyChunk();
+        }
+
+        public void RenderChunk() {
             CreateMesh();
         }
 
