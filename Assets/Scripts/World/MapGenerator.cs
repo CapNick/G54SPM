@@ -31,14 +31,9 @@ namespace World {
 		public int ChunkHeight = 16;
 		public int ChunkWidth = 16;
 		
-		//stores the information on the map including; blocks, width, height, length and seed.
-
+		//store the information on the map including; blocks, width, height, length and seed.W
 		public Map Map;
 		
-		public void Awake() {
-			
-		}
-
 		public void Start() {
 			GenerateChunks();
 		}
@@ -48,28 +43,33 @@ namespace World {
 			
 			//set the map container for saving
 			GameObject chunk;
-			//generate map
-			for (int x = -RenderRadius; x <= RenderRadius; x++) {
-				for (int y = -RenderRadius; y <= RenderRadius; y++) {
-					chunk = Instantiate(ChunkPrefab);
-					chunk.transform.SetParent(transform);
-					chunk.name = "Chunk" + ":" + x + ", " + y;
-					chunk.GetComponent<Chunk>().SetUpChunk(Map, x, y,ChunkLength, ChunkHeight, ChunkWidth );
-					chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
-					Map.Chunks.Add(chunk.GetComponent<Chunk>());
-				}
-			}
+//			generate map
+//			for (int x = -RenderRadius; x <= RenderRadius; x++) {
+//				for (int y = -RenderRadius; y <= RenderRadius; y++) {
+//					chunk = Instantiate(ChunkPrefab);
+//					chunk.transform.SetParent(transform);
+//					chunk.name = "Chunk" + ":" + x + ", " + y;
+//					chunk.GetComponent<Chunk>().SetUpChunk(Map, x, y,ChunkLength, ChunkHeight, ChunkWidth );
+//					chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
+//					Map.Chunks.Add(chunk.GetComponent<Chunk>());
+//				}
+//			}
+			
+			chunk = Instantiate(ChunkPrefab);
+			chunk.transform.SetParent(transform);
+			chunk.name = "Chunk" + ":" + 0 + ", " + 0;
+			chunk.GetComponent<Chunk>().SetUpChunk(Map, 0, 0,ChunkLength, ChunkHeight, ChunkWidth );
+			chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(0+Offset.x,0+Offset.y)));
+			Map.Chunks.Add(chunk.GetComponent<Chunk>());
 		}
 		
 
-		private void ReloadCHunks() {
+		private void ReloadCalculateChunks() {
 			if (Map.Chunks.Count > 1) {
-
 				foreach (Chunk chun in Map.Chunks) {
 					int x = chun.X;
 					int y = chun.Z;
 					chun.GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
-
 				}
 			}
 		}
@@ -89,11 +89,8 @@ namespace World {
 				Octaves = 0;
 			}
 
-			ReloadCHunks();
+//			ReloadCalculateChunks();
 		}
 
-//		public Block GetBlock(Vector3 pos) {
-//			
-//		}
 	}
 }

@@ -33,25 +33,23 @@ namespace World {
             //give it the reference to the map object
             _map = map;
             
-            //set position of chunk
-
             //save world position
             X = x;
             Z = z;
-            transform.position = new Vector3(x * sizeX,0,z * sizeZ);
-
             
             //set chunk dimension
             _sizeX = sizeX;
             _sizeY = sizeY;
             _sizeZ = sizeZ;
             
+            //set position of chunk
+            transform.position = new Vector3(x * sizeX,0,z * sizeZ);
+            
             //block array
             _blocks = new Block[_sizeX,_sizeY,_sizeZ];
             _verticies = new List<Vector3>();
             _triangles = new List<int>();
             _uvs = new List<Vector2>();
-            _textures = new List<Vector2Int>();
             _collider = GetComponent<MeshCollider> ();
             PoulateTextures();
             CreateBlocks();
@@ -74,11 +72,17 @@ namespace World {
             }
 
             GrassifyChunk();
+            CreateMesh();
         }
 
         public void RenderChunk() {
             CreateMesh();
         }
+
+        public void UpdateBlock(int x, int y , int z, bool isActive, int id) { 
+            _blocks[x, y, z].IsActive = isActive; 
+            _blocks[x, y, z].Id = id; 
+        } 
 
         private void GrassifyChunk() {
             int counter = 0;
@@ -110,6 +114,7 @@ namespace World {
         
         //load in textures from atlas
         private void PoulateTextures() {
+            _textures = new List<Vector2Int>();
             for (int x = 0; x < 16; x++) {
                 for (int y = 0; y < 16; y++) {
                     _textures.Add(new Vector2Int(x,y));
