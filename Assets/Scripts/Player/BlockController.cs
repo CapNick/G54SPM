@@ -39,7 +39,6 @@ namespace Player {
 		}
 		
 		private void PlaceBlock() {
-			Debug.Log("<color=blue>BlockController ==> Place Block</color>");
 			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, Range)) {
@@ -49,31 +48,36 @@ namespace Player {
 						Mathf.FloorToInt(hit.point.x), Mathf.FloorToInt(hit.point.y), Mathf.FloorToInt(hit.point.z));
 					// make sure we are on the outside on the block
 					position += hit.normal * 0.5f;
+					Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// add the block
-					Map.AddBlock(position, hit.collider.gameObject.GetComponent<Chunk>(), Id);
+					Map.AddBlock(position, Id);
+					Debug.DrawLine(ray.origin,ray.origin+( ray.direction*hit.distance),Color.green,2);
+
 				}
 				catch (Exception e) {
-					Debug.Log("<color=red>BlockController ==> Place Block ERROR: "+e+"</color>");
+					Debug.Log("BlockController ==> Place Block ERROR: "+e);
 				}
 				
 			}
 		}
 		
 		private void RemoveBlock() {
-			Debug.Log("<color=blue>BlockController ==> Remove Block</color>");
 			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit)) {
+			if (Physics.Raycast(ray, out hit, Range)) {
 				try {
 					Vector3 position = new Vector3Int(
 						Mathf.FloorToInt(hit.point.x), Mathf.FloorToInt(hit.point.y), Mathf.FloorToInt(hit.point.z));
 					// make sure we are on the inside on the block
 					position += hit.normal * -0.5f;
+					Debug.Log("<color=blue>BlockController ==> Remove Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// remove the block
-					Map.RemoveBlock(position, hit.collider.gameObject.GetComponent<Chunk>());
+					Map.RemoveBlock(position);
+					Debug.DrawLine(ray.origin,ray.origin+( ray.direction*hit.distance),Color.red,2);
+
 				}
 				catch (Exception e) {
-					Debug.Log("<color=red>BlockController ==> Remove Block ERROR: "+e+"</color>");
+					Debug.Log("BlockController ==> Remove Block ERROR: "+e);
 				}
 				
 			}

@@ -26,15 +26,21 @@ namespace World {
 		public Vector2 Offset;
 		public NoiseMethodType MethodType;
 
-		[Space, Header("Chunk Information")]
-		public int ChunkLength = 16;
-		public int ChunkHeight = 16;
-		public int ChunkWidth = 16;
+		private int ChunkLength;
+		private int ChunkHeight;
+		private int ChunkWidth;
 		
 		//store the information on the map including; blocks, width, height, length and seed.W
-		public Map Map;
+		private Map Map;
 		
 		public void Start() {
+			if (Map == null) {
+				Map = GetComponent<Map>();
+			}
+
+			ChunkLength = Map.ChunkLength;
+			ChunkHeight = Map.ChunkHeight;
+			ChunkWidth = Map.ChunkWidth;
 			GenerateChunks();
 		}
 
@@ -44,23 +50,23 @@ namespace World {
 			//set the map container for saving
 			GameObject chunk;
 //			generate map
-//			for (int x = -RenderRadius; x <= RenderRadius; x++) {
-//				for (int y = -RenderRadius; y <= RenderRadius; y++) {
-//					chunk = Instantiate(ChunkPrefab);
-//					chunk.transform.SetParent(transform);
-//					chunk.name = "Chunk" + ":" + x + ", " + y;
-//					chunk.GetComponent<Chunk>().SetUpChunk(Map, x, y,ChunkLength, ChunkHeight, ChunkWidth );
-//					chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
-//					Map.Chunks.Add(chunk.GetComponent<Chunk>());
-//				}
-//			}
+			for (int x = -RenderRadius; x <= RenderRadius; x++) {
+				for (int y = -RenderRadius; y <= RenderRadius; y++) {
+					chunk = Instantiate(ChunkPrefab);
+					chunk.transform.SetParent(transform);
+					chunk.name = "Chunk" + ":" + x + ", " + y;
+					chunk.GetComponent<Chunk>().SetUpChunk(Map, x, y,ChunkLength, ChunkHeight, ChunkWidth );
+					chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
+					Map.Chunks.Add(chunk.GetComponent<Chunk>());
+				}
+			}
 			
-			chunk = Instantiate(ChunkPrefab);
-			chunk.transform.SetParent(transform);
-			chunk.name = "Chunk" + ":" + 0 + ", " + 0;
-			chunk.GetComponent<Chunk>().SetUpChunk(Map, 0, 0,ChunkLength, ChunkHeight, ChunkWidth );
-			chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(0+Offset.x,0+Offset.y)));
-			Map.Chunks.Add(chunk.GetComponent<Chunk>());
+//			chunk = Instantiate(ChunkPrefab);
+//			chunk.transform.SetParent(transform);
+//			chunk.name = "Chunk" + ":" + 0 + ", " + 0;
+//			chunk.GetComponent<Chunk>().SetUpChunk(Map, 0, 0,ChunkLength, ChunkHeight, ChunkWidth );
+//			chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(0+Offset.x,0+Offset.y)));
+//			Map.Chunks.Add(chunk.GetComponent<Chunk>());
 		}
 		
 
