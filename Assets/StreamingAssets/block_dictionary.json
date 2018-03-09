@@ -148,5 +148,15 @@
 		"BackId": 4,
 		"LeftId": 4,
 		"RightId": 4 
+	},
+	{
+		"Id": 15, 
+		"_Name": "glass", 
+		"BottomId": 28,
+		"TopId": 28,
+		"FrontId": 28,
+		"BackId": 28,
+		"LeftId": 28,
+		"RightId": 28 
 	}
 ]

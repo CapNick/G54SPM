@@ -11,7 +11,7 @@ namespace Player {
 		public Camera Cam;
 		public float Range;
 		public LayerMask Mask;
-		[Range(1,14)]
+		[Range(1,15)]
 		public int Id = 1;
 
 		// Use this for initialization
@@ -30,7 +30,7 @@ namespace Player {
 			}
 			//quick implimentation of block id changing using the 1 and 2 keys
 			
-			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < 14) {
+			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < 15) {
 				Id++;
 			}
 			if (Input.GetKeyDown(KeyCode.Alpha1) && Id > 1) {
