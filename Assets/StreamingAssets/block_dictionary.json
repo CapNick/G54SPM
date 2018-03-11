@@ -51,7 +51,7 @@
 	},
 	{
 		"Id": 5, 
-		"_Name": "iron", 
+		"_Name": "iron ore", 
 		"BottomId": 29,
 		"TopId": 29,
 		"FrontId": 29,
@@ -61,7 +61,7 @@
 	},
 	{
 		"Id": 6, 
-		"_Name": "gold", 
+		"_Name": "gold ore", 
 		"BottomId": 13,
 		"TopId": 13,
 		"FrontId": 13,
@@ -71,7 +71,7 @@
 	},
 	{
 		"Id": 7, 
-		"_Name": "coal", 
+		"_Name": "coal ore", 
 		"BottomId": 45,
 		"TopId": 45,
 		"FrontId": 45,
@@ -81,7 +81,7 @@
 	},
 	{
 		"Id": 8, 
-		"_Name": "diamond", 
+		"_Name": "diamond ore", 
 		"BottomId": 44,
 		"TopId": 44,
 		"FrontId": 44,
@@ -158,5 +158,55 @@
 		"BackId": 28,
 		"LeftId": 28,
 		"RightId": 28 
+	},
+	{
+		"Id": 16, 
+		"_Name": "sand", 
+		"BottomId": 46,
+		"TopId": 46,
+		"FrontId": 46,
+		"BackId": 46,
+		"LeftId": 46,
+		"RightId": 46 
+	},
+	{
+		"Id": 17, 
+		"_Name": "gravel", 
+		"BottomId": 62,
+		"TopId": 62,
+		"FrontId": 62,
+		"BackId": 62,
+		"LeftId": 62,
+		"RightId": 62 
+	},
+	{
+		"Id": 18, 
+		"_Name": "mossy cobblestone", 
+		"BottomId": 77,
+		"TopId": 77,
+		"FrontId": 77,
+		"BackId": 77,
+		"LeftId": 77,
+		"RightId": 77 
+	},
+	{
+		"Id": 19, 
+		"_Name": "oak leafs", 
+		"BottomId": 92,
+		"TopId": 92,
+		"FrontId": 92,
+		"BackId": 92,
+		"LeftId": 92,
+		"RightId": 92 
+	},
+	{
+		"Id": 19, 
+		"_Name": "glowstone lamp", 
+		"BottomId": 92,
+		"TopId": 92,
+		"FrontId": 92,
+		"BackId": 92,
+		"LeftId": 92,
+		"RightId": 92 
 	}
 ]
