@@ -26,7 +26,7 @@ namespace World {
 
         public Chunk GetChunk(int x, int z) {
             //divide by the chunk width and height to get the chunk position
-            Debug.Log("<color=blue>Map ==> Get Chunk Before: ==> x:"+x+" z:"+z+"</color>");
+//            Debug.Log("<color=blue>Map ==> Get Chunk Before: ==> x:"+x+" z:"+z+"</color>");
             int chunkX = Mathf.FloorToInt(x / ChunkLength);
             if (x < 0) {
                 chunkX--;
@@ -53,12 +53,15 @@ namespace World {
             //use math.abs to make sure the value is always positive
             breakPosX = Math.Abs(breakPosX);
             breakPosZ = Math.Abs(breakPosZ);
-
+            
             Debug.Log("<color=blue>Map ==> Remove Block ==> Pos: (" + breakPosX + ", " + position.y + ", " +
                       breakPosZ+"), Chunk: ("+chunk.X+","+chunk.Z+")</color>");
             //set block to air
-            chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, false, BlockDict[0].Id);
-            chunk.RenderChunk();
+            Block block = chunk.GetBlock(breakPosX, (int) position.y, breakPosZ);
+            if (block.IsActive) {
+                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, false, BlockDict[0].Id);
+                chunk.RenderChunk();
+            }
         }
 
         public void AddBlock(Vector3 position, int blockId) {
@@ -69,12 +72,16 @@ namespace World {
             //use math.abs to make sure the value is always positive
             breakPosX = Math.Abs(breakPosX);
             breakPosZ = Math.Abs(breakPosZ);
-
+            
             Debug.Log("<color=blue>Map ==> Add Block ==> ID:" + blockId + ", Pos: (" + breakPosX + ", " + position.y + ", " +
                       breakPosZ+"), Chunk: ("+chunk.X+","+chunk.Z+")</color>");
-            chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, true, BlockDict[blockId].Id);
-            chunk.RenderChunk();
+            
+            Block block = chunk.GetBlock(breakPosX, (int) position.y, breakPosZ);
+            if (!block.IsActive) {
+                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, true, BlockDict[blockId].Id);
+                chunk.RenderChunk();
+            }
+            
         }
-        
     }
 }

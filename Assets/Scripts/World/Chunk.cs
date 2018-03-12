@@ -83,6 +83,13 @@ namespace World {
             _blocks[x, y, z].IsActive = isActive; 
             _blocks[x, y, z].Id = id; 
         } 
+        
+        public Block GetBlock(int x, int y, int z) {
+            if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
+                return _blocks[x, y, z];
+            }
+            return new Block(0, false);
+        }
 
         private void GrassifyChunk() {
             int counter = 0;
@@ -141,12 +148,7 @@ namespace World {
             }
         }
 
-        private Block GetBlock(int x, int y, int z) {
-            if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
-                return _blocks[x, y, z];
-            }
-            return new Block(0, false);
-        }
+        
 
         private void CreateMesh() {
             _verticies.Clear();

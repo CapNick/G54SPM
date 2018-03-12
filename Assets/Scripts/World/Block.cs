@@ -9,6 +9,5 @@ namespace World {
             Id = id;
             IsActive = active;
         }
-
     }
 }
