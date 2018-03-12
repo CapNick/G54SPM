@@ -15,13 +15,8 @@ namespace World {
         public int ChunkWidth = 16;
         
         public void Awake() {
-            BlockDict = BlockDictionary.LoadAllData("block_dictionary.json");
-            if (BlockDict != null) {
-                Debug.Log("<color=green>BlockDictionary ==> Block Data Loaded Sucessfully</color>");
-            }
-            else {
-                Debug.Log("<color=red>BlockDictionary ==> ERROR ==> There was an issue with loading the block data</color>");
-            }
+            BlockDictionary.Instance.LoadAllData("block_dictionary.json");
+            BlockDict = BlockDictionary.Instance.GetAllData();
         }
 
         public Chunk GetChunk(int x, int z) {
@@ -60,7 +55,7 @@ namespace World {
             Block block = chunk.GetBlock(breakPosX, (int) position.y, breakPosZ);
             if (block.IsActive) {
                 
-                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, BlockDict[0].Id, false, true);
+                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, BlockDict[0].Id, false);
                 chunk.RenderChunk();
             }
         }
@@ -79,7 +74,7 @@ namespace World {
             
             Block block = chunk.GetBlock(breakPosX, (int) position.y, breakPosZ);
             if (!block.IsActive) {
-                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, BlockDict[blockId].Id, true, BlockDict[blockId].IsTransparent);
+                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, BlockDict[blockId].Id, true);
                 chunk.RenderChunk();
             }
             

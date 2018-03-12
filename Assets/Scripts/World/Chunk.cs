@@ -79,17 +79,16 @@ namespace World {
             CreateMesh();
         }
 
-        public void UpdateBlock(int x, int y , int z, int id, bool isActive, bool isTransparent ) { 
+        public void UpdateBlock(int x, int y , int z, int id, bool isActive ) { 
             _blocks[x, y, z].Id = id; 
             _blocks[x, y, z].IsActive = isActive; 
-            _blocks[x, y, z].IsTransparent = isTransparent; 
         } 
         
         public Block GetBlock(int x, int y, int z) {
             if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
                 return _blocks[x, y, z];
             }
-            return new Block(0, false, false);
+            return new Block(0, false);
         }
 
         private void GrassifyChunk() {
@@ -136,13 +135,13 @@ namespace World {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
                         if (y == 0) {
-                            _blocks[x,y,z] = new Block(11, true, false);
+                            _blocks[x,y,z] = new Block(11, true);
                         }
                         else if (y < 64) {
-                            _blocks[x,y,z] = new Block(1, true, false);
+                            _blocks[x,y,z] = new Block(1, true);
                         }
                         else {
-                            _blocks[x,y,z] = new Block(0, false, false);
+                            _blocks[x,y,z] = new Block(0, false);
                         }
                     }
                 }
@@ -166,28 +165,34 @@ namespace World {
                         Block block = _blocks[x, y, z];
                         if (block.IsActive) {
                             //TODO: Add checks for the side meshes too so they dont need to draw side faces if not needed
-                            //check the block below is not active and if it is also not the bottom of the world
-                            if (!GetBlock(x,y-1,z).IsActive || GetBlock(x,y-1,z).IsTransparent) {
+                            
+                            
+                            // get the block dictionary so we can check if the blocks are transparent or not
+                            //this way we do not have to spawn the transparancey in the block struct
+                            BlockDictionary dict = BlockDictionary.Instance;
+                            
+                            
+                            if (!GetBlock(x,y-1,z).IsActive || dict.GetBlockType(GetBlock(x,y-1,z).Id).IsTransparent) {
                                 CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
                             }
 
-                            if (!GetBlock(x,y,z-1).IsActive || GetBlock(x,y,z-1).IsTransparent) {
+                            if (!GetBlock(x,y,z-1).IsActive || dict.GetBlockType(GetBlock(x,y,z-1).Id).IsTransparent) {
                                 CreateCubeLeft(x, y, z, _map.BlockDict[block.Id].LeftId);
                             }
 
-                            if (!GetBlock(x-1,y,z).IsActive || GetBlock(x-1,y,z).IsTransparent) {
+                            if (!GetBlock(x-1,y,z).IsActive || dict.GetBlockType(GetBlock(x-1,y,z).Id).IsTransparent) {
                                 CreateCubeFront(x, y, z, _map.BlockDict[block.Id].FrontId);
                             }
 
-                            if (!GetBlock(x+1,y,z).IsActive || GetBlock(x+1,y,z).IsTransparent) {
+                            if (!GetBlock(x+1,y,z).IsActive || dict.GetBlockType(GetBlock(x+1,y,z).Id).IsTransparent) {
                                 CreateCubeBack(x, y, z, _map.BlockDict[block.Id].BackId);
                             }
 
-                            if (!GetBlock(x,y,z+1).IsActive || GetBlock(x,y,z+1).IsTransparent) {
+                            if (!GetBlock(x,y,z+1).IsActive || dict.GetBlockType(GetBlock(x,y,z+1).Id).IsTransparent) {
                                 CreateCubeRight(x, y, z, _map.BlockDict[block.Id].RightId);
                             }
 
-                            if (!GetBlock(x,y+1,z).IsActive || GetBlock(x,y+1,z).IsTransparent) {
+                            if (!GetBlock(x,y+1,z).IsActive || dict.GetBlockType(GetBlock(x,y+1,z).Id).IsTransparent) {
                                 CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
                             }
                         }

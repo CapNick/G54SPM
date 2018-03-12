@@ -12,6 +12,7 @@ namespace Player {
 		public LayerMask Mask;
 		[Range(1,15)]
 		public int Id = 1;
+		public bool Debug = true;
 		
 		private Vector3 _destroyPoint;
 		private Vector3 _placePoint;
@@ -24,13 +25,16 @@ namespace Player {
 	
 		// Update is called once per frame
 		void Update () {
-			
+			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+			if (Debug) {
+				DisplayBlockPlacement(ray);
+			}
 			if (Input.GetMouseButtonDown(0)) {
-				PlaceBlock();
+				PlaceBlock(ray);
 			}
 
 			if (Input.GetMouseButtonDown(1)) {
-				RemoveBlock();
+				RemoveBlock(ray);
 			}
 			//quick implimentation of block id changing using the 1 and 2 keys
 			
@@ -42,12 +46,51 @@ namespace Player {
 			}
 		}
 
-		private void PlaceBlock() {
-			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+		private void DisplayBlockPlacement(Ray ray) {
+			RaycastHit hit;
+			if (Physics.Raycast(ray, out hit, Range)) {
+				Vector3 position = new Vector3(
+					Mathf.FloorToInt(hit.point.x),
+					Mathf.FloorToInt(hit.point.y),
+					Mathf.FloorToInt(hit.point.z));
+				Vector3 normal = hit.normal;
+				Vector3 normalDel = hit.normal;
+
+				// make sure we are on the outside on the block
+				if ((int) hit.normal.x == 1) {
+					normal.x = 0;
+				}
+
+				if ((int) hit.normal.y == 1) {
+					normal.y = 0;
+				}
+
+				if ((int) hit.normal.z == 1) {
+					normal.z = 0;
+				}
+				
+				if ((int)hit.normal.x == -1) {
+					normalDel.x = 0;
+				}
+				if ((int)hit.normal.y == -1) {
+					normalDel.y = 0;
+				}
+				if ((int)hit.normal.z == -1) {
+					normalDel.z = 0;
+				}
+
+				_placePoint = position + normal;
+				_destroyPoint = position - normalDel;
+
+
+			}
+		}
+
+		private void PlaceBlock(Ray ray) {
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, Range)) {
 				try {
-					Debug.Log("<color=blue>BlockController ==> True Place Block at ("+hit.point.x+","+hit.point.y+","+hit.point.z+")</color>");
+					UnityEngine.Debug.Log("<color=blue>BlockController ==> True Place Block at ("+hit.point.x+","+hit.point.y+","+hit.point.z+")</color>");
 					Vector3 position = new Vector3(
 						Mathf.FloorToInt(hit.point.x), 
 						Mathf.FloorToInt(hit.point.y), 
@@ -65,19 +108,17 @@ namespace Player {
 						normal.z = 0;
 					}
 					position += normal;
-					Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
+					UnityEngine.Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// add the block
-					_placePoint = position;
 					Map.AddBlock(position, Id);
 				}
 				catch (Exception e) {
-					Debug.Log("BlockController ==> Place Block ERROR: "+e);
+					UnityEngine.Debug.Log("BlockController ==> Place Block ERROR: "+e);
 				}	
 			}
 		}
 		
-		private void RemoveBlock() {
-			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+		private void RemoveBlock(Ray ray) {
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, Range)) {
 				try {
@@ -98,13 +139,12 @@ namespace Player {
 						normal.z = 0;
 					}
 					position -= normal;
-					Debug.Log("<color=blue>BlockController ==> Remove Block at ("+position.x+","+position.y+","+position.z+")</color>");
+					UnityEngine.Debug.Log("<color=blue>BlockController ==> Remove Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// remove the block
-					_destroyPoint = position;
 					Map.RemoveBlock(position);
 				}
 				catch (Exception e) {
-					Debug.Log("BlockController ==> Remove Block ERROR: "+e);
+					UnityEngine.Debug.Log("BlockController ==> Remove Block ERROR: "+e);
 				}
 			}
 		}

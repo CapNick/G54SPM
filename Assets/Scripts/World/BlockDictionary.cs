@@ -4,9 +4,27 @@ using System.IO;
 using UnityEngine;
 
 namespace World {
-    public static class BlockDictionary {
-        public static Dictionary<int, BlockType> LoadAllData (string filename) {
-            Dictionary<int, BlockType> blockDict = new Dictionary<int, BlockType>(); 
+    public sealed class BlockDictionary {
+        private static volatile BlockDictionary instance;
+        private static object syncRoot = new Object();
+        private Dictionary<int, BlockType> blockDict = new Dictionary<int, BlockType>();
+        private BlockDictionary() {
+            
+        }
+        
+        public static BlockDictionary Instance {
+            get {
+                if (instance == null) {
+                    lock (syncRoot) {
+                        if (instance == null) 
+                            instance = new BlockDictionary();
+                    }
+                }
+                return instance;
+            }
+        }
+        
+        public void LoadAllData (string filename) {
             string filePath = Path.Combine(Application.streamingAssetsPath, filename);
             string _dataAsJson;
             List<BlockType> types;
@@ -19,11 +37,21 @@ namespace World {
                     blockDict.Add(blockType.Id, blockType);
                 }
                 
-                return blockDict;
             }
-            else {
-                return null;
+            
+        }
+
+        public Dictionary<int, BlockType> GetAllData() {
+            return blockDict; 
+        }
+
+        public BlockType GetBlockType(int id) {
+            if (blockDict.ContainsKey(id)) {
+                return blockDict[id];
             }
+            BlockType blank = new BlockType();
+            blank.Id = -1;
+            return blank;
         }
         
     }
