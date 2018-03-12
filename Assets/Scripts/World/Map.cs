@@ -59,7 +59,8 @@ namespace World {
             //set block to air
             Block block = chunk.GetBlock(breakPosX, (int) position.y, breakPosZ);
             if (block.IsActive) {
-                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, false, BlockDict[0].Id);
+                
+                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, BlockDict[0].Id, false, true);
                 chunk.RenderChunk();
             }
         }
@@ -78,7 +79,7 @@ namespace World {
             
             Block block = chunk.GetBlock(breakPosX, (int) position.y, breakPosZ);
             if (!block.IsActive) {
-                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, true, BlockDict[blockId].Id);
+                chunk.UpdateBlock(breakPosX, (int)position.y, breakPosZ, BlockDict[blockId].Id, true, BlockDict[blockId].IsTransparent);
                 chunk.RenderChunk();
             }
             

@@ -79,16 +79,17 @@ namespace World {
             CreateMesh();
         }
 
-        public void UpdateBlock(int x, int y , int z, bool isActive, int id) { 
-            _blocks[x, y, z].IsActive = isActive; 
+        public void UpdateBlock(int x, int y , int z, int id, bool isActive, bool isTransparent ) { 
             _blocks[x, y, z].Id = id; 
+            _blocks[x, y, z].IsActive = isActive; 
+            _blocks[x, y, z].IsTransparent = isTransparent; 
         } 
         
         public Block GetBlock(int x, int y, int z) {
             if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
                 return _blocks[x, y, z];
             }
-            return new Block(0, false);
+            return new Block(0, false, false);
         }
 
         private void GrassifyChunk() {
@@ -135,13 +136,13 @@ namespace World {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
                         if (y == 0) {
-                            _blocks[x,y,z] = new Block(11, true);
+                            _blocks[x,y,z] = new Block(11, true, false);
                         }
                         else if (y < 64) {
-                            _blocks[x,y,z] = new Block(1, true);
+                            _blocks[x,y,z] = new Block(1, true, false);
                         }
                         else {
-                            _blocks[x,y,z] = new Block(0, false);
+                            _blocks[x,y,z] = new Block(0, false, false);
                         }
                     }
                 }
@@ -151,10 +152,12 @@ namespace World {
         
 
         private void CreateMesh() {
+            if (_mesh == null) {
+                _mesh = GetComponent<MeshFilter>().mesh;
+            }
             _verticies.Clear();
             _triangles.Clear();
             _uvs.Clear();
-            _mesh = GetComponent<MeshFilter>().mesh;
             _mesh.Clear();
             
             for (int x = 0; x < _sizeX; x++) {
@@ -164,27 +167,27 @@ namespace World {
                         if (block.IsActive) {
                             //TODO: Add checks for the side meshes too so they dont need to draw side faces if not needed
                             //check the block below is not active and if it is also not the bottom of the world
-                            if (!GetBlock(x,y-1,z).IsActive && y != 0) {
+                            if (!GetBlock(x,y-1,z).IsActive || GetBlock(x,y-1,z).IsTransparent) {
                                 CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
                             }
 
-                            if (!GetBlock(x,y,z-1).IsActive) {
+                            if (!GetBlock(x,y,z-1).IsActive || GetBlock(x,y,z-1).IsTransparent) {
                                 CreateCubeLeft(x, y, z, _map.BlockDict[block.Id].LeftId);
                             }
 
-                            if (!GetBlock(x-1,y,z).IsActive) {
+                            if (!GetBlock(x-1,y,z).IsActive || GetBlock(x-1,y,z).IsTransparent) {
                                 CreateCubeFront(x, y, z, _map.BlockDict[block.Id].FrontId);
                             }
 
-                            if (!GetBlock(x+1,y,z).IsActive) {
+                            if (!GetBlock(x+1,y,z).IsActive || GetBlock(x+1,y,z).IsTransparent) {
                                 CreateCubeBack(x, y, z, _map.BlockDict[block.Id].BackId);
                             }
 
-                            if (!GetBlock(x,y,z+1).IsActive) {
+                            if (!GetBlock(x,y,z+1).IsActive || GetBlock(x,y,z+1).IsTransparent) {
                                 CreateCubeRight(x, y, z, _map.BlockDict[block.Id].RightId);
                             }
 
-                            if (!GetBlock(x,y+1,z).IsActive) {
+                            if (!GetBlock(x,y+1,z).IsActive || GetBlock(x,y+1,z).IsTransparent) {
                                 CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
                             }
                         }

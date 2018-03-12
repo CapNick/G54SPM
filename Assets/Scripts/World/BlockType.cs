@@ -5,6 +5,7 @@ namespace World {
     public struct BlockType {
         public int Id;
         public string _Name;
+        public bool IsTransparent;
         public int BottomId;
         public int TopId;
         public int FrontId;

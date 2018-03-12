@@ -5,9 +5,11 @@ namespace World {
     public struct Block {
         public int Id;
         public bool IsActive;
-        public Block(int id, bool active) {
+        public bool IsTransparent;
+        public Block(int id, bool active, bool isTransparent) {
             Id = id;
             IsActive = active;
+            IsTransparent = isTransparent;
         }
     }
 }
