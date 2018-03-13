@@ -13,11 +13,11 @@ namespace Player {
 		[Range(1,15)]
 		public int Id = 1;
 		public bool Debug = true;
+		public GameObject blockTrace;
 		
 		private Vector3 _destroyPoint;
 		private Vector3 _placePoint;
-
-		public Vector3 norm;
+		
 		
 		// Use this for initialization
 		void Start () {
@@ -29,6 +29,8 @@ namespace Player {
 			if (Debug) {
 				DisplayBlockPlacement(ray);
 			}
+
+			PlaceBlockTrace(ray);
 			if (Input.GetMouseButtonDown(0)) {
 				PlaceBlock(ray);
 			}
@@ -43,6 +45,39 @@ namespace Player {
 			}
 			if (Input.GetKeyDown(KeyCode.Alpha1) && Id > 1) {
 				Id--;
+			}
+		}
+
+		private void PlaceBlockTrace(Ray ray) {
+			RaycastHit hit;
+			if (Physics.Raycast(ray, out hit, Range)) {
+				try {
+					Vector3 position = new Vector3(
+						Mathf.FloorToInt(hit.point.x)+0.5f, 
+						Mathf.FloorToInt(hit.point.y)+0.5f, 
+						Mathf.FloorToInt(hit.point.z)+0.5f);
+					Vector3 normal = hit.normal;
+
+					// make sure we are on the outside on the block
+					if ((int)hit.normal.x == -1) {
+						normal.x = 0;
+					}
+					if ((int)hit.normal.y == -1) {
+						normal.y = 0;
+					}
+					if ((int)hit.normal.z == -1) {
+						normal.z = 0;
+					}
+					position -= normal;
+					blockTrace.SetActive(true);
+					blockTrace.transform.position = position;
+				}
+				catch (Exception) {
+					// ignored
+				}
+			}
+			else {
+				blockTrace.SetActive(false);
 			}
 		}
 
@@ -90,7 +125,7 @@ namespace Player {
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, Range)) {
 				try {
-					UnityEngine.Debug.Log("<color=blue>BlockController ==> True Place Block at ("+hit.point.x+","+hit.point.y+","+hit.point.z+")</color>");
+//					UnityEngine.Debug.Log("<color=blue>BlockController ==> True Place Block at ("+hit.point.x+","+hit.point.y+","+hit.point.z+")</color>");
 					Vector3 position = new Vector3(
 						Mathf.FloorToInt(hit.point.x), 
 						Mathf.FloorToInt(hit.point.y), 
