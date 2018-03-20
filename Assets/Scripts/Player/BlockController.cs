@@ -18,11 +18,6 @@ namespace Player {
 		private Vector3 _destroyPoint;
 		private Vector3 _placePoint;
 		
-		
-		// Use this for initialization
-		void Start () {
-		}
-	
 		// Update is called once per frame
 		void Update () {
 			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
@@ -50,7 +45,7 @@ namespace Player {
 
 		private void PlaceBlockTrace(Ray ray) {
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, Range)) {
+			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				try {
 					Vector3 position = new Vector3(
 						Mathf.FloorToInt(hit.point.x)+0.5f, 
@@ -83,7 +78,7 @@ namespace Player {
 
 		private void DisplayBlockPlacement(Ray ray) {
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, Range)) {
+			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				Vector3 position = new Vector3(
 					Mathf.FloorToInt(hit.point.x),
 					Mathf.FloorToInt(hit.point.y),
@@ -123,7 +118,7 @@ namespace Player {
 
 		private void PlaceBlock(Ray ray) {
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, Range)) {
+			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				try {
 //					UnityEngine.Debug.Log("<color=blue>BlockController ==> True Place Block at ("+hit.point.x+","+hit.point.y+","+hit.point.z+")</color>");
 					Vector3 position = new Vector3(
@@ -155,7 +150,7 @@ namespace Player {
 		
 		private void RemoveBlock(Ray ray) {
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, Range)) {
+			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				try {
 					Vector3 position = new Vector3(
 						Mathf.FloorToInt(hit.point.x), 

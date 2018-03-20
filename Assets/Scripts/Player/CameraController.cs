@@ -1,44 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CameraController : MonoBehaviour {
+namespace Player {
+	public class CameraController : MonoBehaviour {
+		public float MinimumY = -70f;
+		public float MaximumY = 70f;
 
-	public float minimumX = -60f;
-	public float maximumX = 60f;
-	public float minimumY = -360f;
-	public float maximumY = 360f;
+		public float SensitivityX = 15f;
+		public float SensitivityY = 15f;
 
-	public float sensitivityX = 15f;
-	public float sensitivityY = 15f;
+		public Camera Cam;
 
-	public Camera cam;
+		float _rotationY = 0f;
+		float _rotationX = 0f;
 
-	float rotationY = 0f;
-	float rotationX = 0f;
-
-	// Use this for initialization
-	void Start () 
-	{
-		Cursor.lockState = CursorLockMode.Locked;
-
-		if (Input.GetKey (KeyCode.Escape)) 
+		// Use this for initialization
+		void Start () 
 		{
-			Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
+			Cursor.lockState = CursorLockMode.Locked;
+
+            
 		}
-	}
 	
-	// Update is called once per frame
-	void Update () 
-	{
-		rotationY += Input.GetAxis ("Mouse X") * sensitivityY;
-		rotationX += Input.GetAxis ("Mouse Y") * sensitivityX;
+		// Update is called once per frame
+		void Update () 
+		{ 
+			if (Input.GetKey (KeyCode.Escape)) 
+			{
+				Cursor.lockState = CursorLockMode.None;
+				Cursor.visible = true;
+			}
+			_rotationX += Input.GetAxis ("Mouse X") * SensitivityX;
+			_rotationY += Input.GetAxis ("Mouse Y") * SensitivityY;
+			_rotationY = Mathf.Clamp (_rotationY, MinimumY, MaximumY);
 
-		rotationX = Mathf.Clamp (rotationX, minimumX, maximumX);
-
-		transform.localEulerAngles = new Vector3 (0, rotationY, 0);
-
-		cam.transform.localEulerAngles = new Vector3 (-rotationX, 0, 0);
+			transform.localEulerAngles = new Vector3 (0, _rotationX, 0);
+			Cam.transform.localEulerAngles = new Vector3 (-_rotationY, 0, 0);
+		}
 	}
 }

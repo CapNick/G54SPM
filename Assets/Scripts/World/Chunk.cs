@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace World {
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
@@ -18,7 +19,7 @@ namespace World {
         private Block[,,] _blocks;
         private Map _map;
         
-        //rendering
+        //render
         private Mesh _mesh;
         private MeshCollider _collider;
         private int _faceCounter;
@@ -32,7 +33,6 @@ namespace World {
         public void SetUpChunk(Map map, int x, int z, int sizeX, int sizeY, int sizeZ) {
             //give it the reference to the map object
             _map = map;
-            
             //save world position
             X = x;
             Z = z;
