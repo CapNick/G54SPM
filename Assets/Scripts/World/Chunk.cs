@@ -91,6 +91,11 @@ namespace World {
             return new Block(0, false);
         }
 
+//        public void OnDrawGizmosSelected() {
+//            Gizmos.color = new Color(255,0,0,0.25f);
+//            Gizmos.DrawCube(new Vector3(X*_sizeX/2, _sizeY/2, Z*_sizeZ/2) , new Vector3(_sizeX, _sizeY, _sizeZ));
+//        }
+
         private void GrassifyChunk() {
             int counter = 0;
             for (int x = 0; x < _sizeX; x++) {

@@ -14,17 +14,19 @@ namespace Player {
 		public int Id = 1;
 		public bool Debug = true;
 		public GameObject blockTrace;
+		public int SelectedBlock;
 		
 		private Vector3 _destroyPoint;
 		private Vector3 _placePoint;
 		
 		// Update is called once per frame
-		void Update () {
+		void FixedUpdate () {
 			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 			if (Debug) {
 				DisplayBlockPlacement(ray);
 			}
 
+			SelectBlockInView();
 			PlaceBlockTrace(ray);
 			if (Input.GetMouseButtonDown(0)) {
 				PlaceBlock(ray);
@@ -40,6 +42,13 @@ namespace Player {
 			}
 			if (Input.GetKeyDown(KeyCode.Alpha1) && Id > 1) {
 				Id--;
+			}
+		}
+
+		private void SelectBlockInView() {
+			if (_destroyPoint != null) {
+				SelectedBlock = Map.GetBlock(_destroyPoint).Id;
+
 			}
 		}
 
@@ -111,8 +120,6 @@ namespace Player {
 
 				_placePoint = position + normal;
 				_destroyPoint = position - normalDel;
-
-
 			}
 		}
 
