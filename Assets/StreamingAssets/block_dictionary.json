@@ -1,0 +1,233 @@
+[
+	{
+		"Id": 0, 
+		"_Name": "air", 
+		"IsTransparent": true,
+		"BottomId": 238,
+		"TopId": 238,
+		"FrontId": 238,
+		"BackId": 238,
+		"LeftId": 238,
+		"RightId": 238 
+	},
+	{
+		"Id": 1, 
+		"_Name": "stone", 
+		"IsTransparent": false,
+		"BottomId": 31,
+		"TopId": 31,
+		"FrontId": 31,
+		"BackId": 31,
+		"LeftId": 31,
+		"RightId": 31 
+	},
+	{
+		"Id": 2, 
+		"_Name": "dirt", 
+		"IsTransparent": false,
+		"BottomId": 47,
+		"TopId": 47,
+		"FrontId": 47,
+		"BackId": 47,
+		"LeftId": 47,
+		"RightId": 47 
+	},
+	{
+		"Id": 3, 
+		"_Name": "grass", 
+		"IsTransparent": false,
+		"BottomId": 47,
+		"TopId": 15,
+		"FrontId": 63,
+		"BackId": 63,
+		"LeftId": 63,
+		"RightId": 63 
+	},
+	{
+		"Id": 4, 
+		"_Name": "cobblestone", 
+		"IsTransparent": false,
+		"BottomId": 14,
+		"TopId": 14,
+		"FrontId": 14,
+		"BackId": 14,
+		"LeftId": 14,
+		"RightId": 14 
+	},
+	{
+		"Id": 5, 
+		"_Name": "iron ore", 
+		"IsTransparent": false,
+		"BottomId": 29,
+		"TopId": 29,
+		"FrontId": 29,
+		"BackId": 29,
+		"LeftId": 29,
+		"RightId": 29 
+	},
+	{
+		"Id": 6, 
+		"_Name": "gold ore", 
+		"IsTransparent": false,
+		"BottomId": 13,
+		"TopId": 13,
+		"FrontId": 13,
+		"BackId": 13,
+		"LeftId": 13,
+		"RightId": 13 
+	},
+	{
+		"Id": 7, 
+		"_Name": "coal ore", 
+		"IsTransparent": false,
+		"BottomId": 45,
+		"TopId": 45,
+		"FrontId": 45,
+		"BackId": 45,
+		"LeftId": 45,
+		"RightId": 45 
+	},
+	{
+		"Id": 8, 
+		"_Name": "diamond ore", 
+		"IsTransparent": false,
+		"BottomId": 44,
+		"TopId": 44,
+		"FrontId": 44,
+		"BackId": 44,
+		"LeftId": 44,
+		"RightId": 44 
+	},
+	{
+		"Id": 9, 
+		"_Name": "oak log", 
+		"IsTransparent": false,
+		"BottomId": 94,
+		"TopId": 94,
+		"FrontId": 78,
+		"BackId": 78,
+		"LeftId": 78,
+		"RightId": 78 
+	},
+	{
+		"Id": 10, 
+		"_Name": "wood planks", 
+		"IsTransparent": false,
+		"BottomId": 79,
+		"TopId": 79,
+		"FrontId": 79,
+		"BackId": 79,
+		"LeftId": 79,
+		"RightId": 79 
+	},
+	{
+		"Id": 11, 
+		"_Name": "beadrock", 
+		"IsTransparent": false,
+		"BottomId": 30,
+		"TopId": 30,
+		"FrontId": 30,
+		"BackId": 30,
+		"LeftId": 30,
+		"RightId": 30 
+	},
+	{
+		"Id": 12, 
+		"_Name": "obsidian", 
+		"IsTransparent": false,
+		"BottomId": 93,
+		"TopId": 93,
+		"FrontId": 93,
+		"BackId": 93,
+		"LeftId": 93,
+		"RightId": 93 
+	},
+	{
+		"Id": 13, 
+		"_Name": "sandstone", 
+		"IsTransparent": false,
+		"BottomId": 2,
+		"TopId": 2,
+		"FrontId": 3,
+		"BackId": 3,
+		"LeftId": 3,
+		"RightId": 3 
+	},
+	{
+		"Id": 14, 
+		"_Name": "sandstone alt", 
+		"IsTransparent": false,
+		"BottomId": 4,
+		"TopId": 4,
+		"FrontId": 4,
+		"BackId": 4,
+		"LeftId": 4,
+		"RightId": 4 
+	},
+	{
+		"Id": 15, 
+		"_Name": "glass", 
+		"IsTransparent": true,
+		"BottomId": 28,
+		"TopId": 28,
+		"FrontId": 28,
+		"BackId": 28,
+		"LeftId": 28,
+		"RightId": 28 
+	},
+	{
+		"Id": 16, 
+		"_Name": "sand", 
+		"IsTransparent": false,
+		"BottomId": 46,
+		"TopId": 46,
+		"FrontId": 46,
+		"BackId": 46,
+		"LeftId": 46,
+		"RightId": 46 
+	},
+	{
+		"Id": 17, 
+		"_Name": "gravel", 
+		"IsTransparent": false,
+		"BottomId": 62,
+		"TopId": 62,
+		"FrontId": 62,
+		"BackId": 62,
+		"LeftId": 62,
+		"RightId": 62 
+	},
+	{
+		"Id": 18, 
+		"_Name": "mossy cobblestone", 
+		"IsTransparent": false,
+		"BottomId": 77,
+		"TopId": 77,
+		"FrontId": 77,
+		"BackId": 77,
+		"LeftId": 77,
+		"RightId": 77 
+	},
+	{
+		"Id": 19, 
+		"_Name": "oak leafs",
+		"IsTransparent": true, 
+		"BottomId": 92,
+		"TopId": 92,
+		"FrontId": 92,
+		"BackId": 92,
+		"LeftId": 92,
+		"RightId": 92 
+	},
+	{
+		"Id": 20, 
+		"_Name": "glowstone lamp", 
+		"IsTransparent": false,
+		"BottomId": 92,
+		"TopId": 92,
+		"FrontId": 92,
+		"BackId": 92,
+		"LeftId": 92,
+		"RightId": 92 
+	}
+]
