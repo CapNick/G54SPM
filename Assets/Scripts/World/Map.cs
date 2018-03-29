@@ -25,7 +25,7 @@ namespace World {
         //gets world position
         public Chunk GetChunk(Vector3 position) {
             //divide by the chunk width and height to get the chunk position
-            string pos2D = new Vector2Int((int)(position.x / ChunkLength),(int)(position.z / ChunkWidth)).ToString();            
+            string pos2D = new Vector2Int(Mathf.FloorToInt(position.x / ChunkLength),Mathf.FloorToInt(position.z / ChunkWidth)).ToString();            
             if (Chunks.ContainsKey(pos2D)) {
                 return Chunks[pos2D];
             }

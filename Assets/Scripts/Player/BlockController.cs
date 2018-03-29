@@ -46,7 +46,6 @@ namespace Player {
 		private void SelectBlockInView() {
 			if (_destroyPoint != null) {
 				SelectedBlock = Map.GetBlock(_destroyPoint).Id;
-
 			}
 		}
 
@@ -55,9 +54,9 @@ namespace Player {
 			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				try {
 					Vector3 position = new Vector3(
-						(int)(hit.point.x)+0.5f, 
-						(int)(hit.point.y)+0.5f, 
-						(int)(hit.point.z)+0.5f);
+						Mathf.FloorToInt(hit.point.x)+0.5f, 
+						Mathf.FloorToInt(hit.point.y)+0.5f, 
+						Mathf.FloorToInt(hit.point.z)+0.5f);
 					Vector3 normal = hit.normal;
 
 					// make sure we are on the outside on the block
@@ -87,9 +86,9 @@ namespace Player {
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				Vector3 position = new Vector3(
-					(int)(hit.point.x),
-					(int)(hit.point.y),
-					(int)(hit.point.z));
+					Mathf.FloorToInt(hit.point.x),
+					Mathf.FloorToInt(hit.point.y),
+					Mathf.FloorToInt(hit.point.z));
 				Vector3 normal = hit.normal;
 				Vector3 normalDel = hit.normal;
 
@@ -126,17 +125,15 @@ namespace Player {
 			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				try {
 					Vector3 position = new Vector3(
-						(int)(hit.point.x), 
-						(int)(hit.point.y), 
-						(int)(hit.point.z));
+						Mathf.FloorToInt(hit.point.x), 
+						Mathf.FloorToInt(hit.point.y), 
+						Mathf.FloorToInt(hit.point.z));
 					Vector3 playerPosition = new Vector3(
-						(int)(transform.position.x), 
-						(int)(transform.position.y), 
-						(int)(transform.position.z));
-					
+						Mathf.FloorToInt(transform.position.x), 
+						Mathf.FloorToInt(transform.position.y), 
+						Mathf.FloorToInt(transform.position.z));
 					
 					Vector3 normal = hit.normal;
-					
 
 					// make sure we are on the outside on the block
 					if ((int)hit.normal.x == 1) {
@@ -150,11 +147,7 @@ namespace Player {
 					}
 					position += normal;
 					
-//					UnityEngine.Debug.Log("<color=blue>BlockController ==> Player at ("+playerPosition.x+","+playerPosition.y+","+playerPosition.z+")</color>");
 					UnityEngine.Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
-
-					
-					
 					// add the block
 					
 					UnityEngine.Debug.Log((int)position.x != (int)playerPosition.x && (int)position.y != (int)playerPosition.y && (int)position.z != (int)playerPosition.z);
@@ -174,9 +167,9 @@ namespace Player {
 			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				try {
 					Vector3 position = new Vector3(
-						(int)(hit.point.x), 
-						(int)(hit.point.y), 
-						(int)(hit.point.z));
+						Mathf.FloorToInt(hit.point.x), 
+						Mathf.FloorToInt(hit.point.y), 
+						Mathf.FloorToInt(hit.point.z));
 					Vector3 normal = hit.normal;
 
 					// make sure we are on the outside on the block
