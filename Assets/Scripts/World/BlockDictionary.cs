@@ -50,7 +50,7 @@ namespace World {
                 return blockDict[id];
             }
             BlockType blank = new BlockType();
-            blank.Id = -1;
+            blank.Id = 255;
             return blank;
         }
         

@@ -3,9 +3,9 @@
 namespace World {
     [Serializable]
     public struct Block {
-        public int Id;
+        public byte Id;
         public bool IsActive;
-        public Block(int id, bool active) {
+        public Block(byte id, bool active) {
             Id = id;
             IsActive = active;
         }

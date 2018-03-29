@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -63,8 +64,8 @@ namespace World {
                             if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY) + 64  >= y) {
                                 _blocks[x,y,z].IsActive = true;
                                 _blocks[x,y,z].Id = 1;
-//                           Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");
-//                           Debug.Log(""+Math.Ceiling(generatedNoiseMap[x, z] * _sizeY));
+//                           Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");   
+//                                Debug.Log(""+Math.Ceiling(generatedNoiseMap[x, z] * _sizeY));
                             }
                         }
                     }
@@ -75,11 +76,12 @@ namespace World {
             CreateMesh();
         }
 
-        public void RenderChunk() {
+        public virtual IEnumerator RenderChunk() {
             CreateMesh();
+            yield return 0;
         }
 
-        public void UpdateBlock(int x, int y , int z, int id, bool isActive ) { 
+        public void UpdateBlock(int x, int y , int z, byte id, bool isActive ) { 
             _blocks[x, y, z].Id = id; 
             _blocks[x, y, z].IsActive = isActive; 
         } 
@@ -103,13 +105,13 @@ namespace World {
                     for (int y = 0; y < _sizeY; y++) {
                         if (GetBlock(x,y,z).IsActive && !GetBlock(x,y+1,z).IsActive) {
                             //put the top 3rd and 2nd layer as dirt
-                            if (counter < 2) {
+                            if (counter < 1) {
                                 _blocks[x,y+1,z].IsActive = true;
                                 _blocks[x,y+1,z].Id = 2;
                                 counter++;
                             }
                             //put the top layer as grass
-                            else if (counter < 3){
+                            else if (counter < 2){
                                 _blocks[x,y+1,z].IsActive = true;
                                 _blocks[x,y+1,z].Id = 3;
                                 counter++;
@@ -169,11 +171,15 @@ namespace World {
                     for (int z = 0; z < _sizeZ; z++) {
                         Block block = _blocks[x, y, z];
                         if (block.IsActive) {
-                            //TODO: Add checks for the side meshes too so they dont need to draw side faces if not needed
+
+                            
+                            // Possibility that we could check if the next chunk 
+//                            int xPosition = X * _sizeX;
+//                            int zPosition = Z * _sizeZ;
                             
                             
                             // get the block dictionary so we can check if the blocks are transparent or not
-                            //this way we do not have to spawn the transparancey in the block struct
+                            //this way we do not have to store the transparancey in the block data structure.
                             BlockDictionary dict = BlockDictionary.Instance;
                             
                             
@@ -200,12 +206,36 @@ namespace World {
                             if (!GetBlock(x,y+1,z).IsActive || dict.GetBlockType(GetBlock(x,y+1,z).Id).IsTransparent) {
                                 CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
                             }
+                            
+//                            if (!GetBlock(x,y-1,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y-1,z)).Id).IsTransparent) {
+//                                CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
+//                            }
+//
+//                            if (!GetBlock(x,y,z-1).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y,z-1)).Id).IsTransparent) {
+//                                CreateCubeLeft(x, y, z, _map.BlockDict[block.Id].LeftId);
+//                            }
+//
+//                            if (!GetBlock(x-1,y,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x-1,y,z)).Id).IsTransparent) {
+//                                CreateCubeFront(x, y, z, _map.BlockDict[block.Id].FrontId);
+//                            }
+//
+//                            if (!GetBlock(x+1,y,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x+1,y,z)).Id).IsTransparent) {
+//                                CreateCubeBack(x, y, z, _map.BlockDict[block.Id].BackId);
+//                            }
+//
+//                            if (!GetBlock(x,y,z+1).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y,z+1)).Id).IsTransparent) {
+//                                CreateCubeRight(x, y, z, _map.BlockDict[block.Id].RightId);
+//                            }
+//
+//                            if (!GetBlock(x,y+1,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y+1,z)).Id).IsTransparent) {
+//                                CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
+//                            }
+                            
                         }
                     }
                 }
             }
-            
-            
+             
             _mesh.vertices = _verticies.ToArray();
             _mesh.triangles = _triangles.ToArray();
             _mesh.uv = _uvs.ToArray();

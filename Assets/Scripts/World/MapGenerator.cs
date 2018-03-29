@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Misc;
 using UnityEngine;
 
 
 namespace World {
 	public class MapGenerator : MonoBehaviour {
-		public GameObject ChunkPrefab;
 
+		public GameObject Player;
+		
+		public GameObject ChunkPrefab;
 		[Range(1,10)]
 		public int RenderRadius = 3;
 		//generation variables
 		[Space, Header("Terrain Generation")]
-//		public int MapWidth;
-//		public int MapHeight;
 		public int Seed;
-//		public float Scale;
 		[Range(1, 8)]
 		public int Octaves;
 		[Range(0f,1f)]
@@ -26,85 +26,77 @@ namespace World {
 		public Vector2 Offset;
 		public NoiseMethodType MethodType;
 
-		private int ChunkLength;
-		private int ChunkHeight;
-		private int ChunkWidth;
+		private int _chunkLength;
+		private int _chunkHeight;
+		private int _chunkWidth;
+		private Chunk _chunk;
 		
 		//store the information on the map including; blocks, width, height, length and seed.W
-		private Map Map;
+		private Map _map;
 		
 		public void Start() {
-			if (Map == null) {
-				Map = GetComponent<Map>();
-			}
-
-			ChunkLength = Map.ChunkLength;
-			ChunkHeight = Map.ChunkHeight;
-			ChunkWidth = Map.ChunkWidth;
-			GenerateChunks();
-		}
-
-		public void GenerateChunks() {
-			//create the random generation
-			
-			//set the map container for saving
-			GameObject chunk;
-//			generate map
-			for (int x = -RenderRadius; x <= RenderRadius; x++) {
-				for (int y = -RenderRadius; y <= RenderRadius; y++) {
-					chunk = Instantiate(ChunkPrefab);
-					chunk.transform.SetParent(transform);
-					chunk.name = "Chunk" + ":" + x + ", " + y;
-					chunk.GetComponent<Chunk>().SetUpChunk(Map, x, y,ChunkLength, ChunkHeight, ChunkWidth );
-					chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
-					Map.Chunks.Add(chunk.GetComponent<Chunk>());
-				}
+			if (_map == null) {
+				_map = GetComponent<Map>();
 			}
 			
-//			Test Chunks			
-//			chunk = Instantiate(ChunkPrefab);
-//			chunk.transform.SetParent(transform);
-//			chunk.name = "Chunk" + ":" + 0 + ", " + 0;
-//			chunk.GetComponent<Chunk>().SetUpChunk(Map, 0, 0,ChunkLength, ChunkHeight, ChunkWidth );
-//			chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(0+Offset.x,0+Offset.y)));
-//			Map.Chunks.Add(chunk.GetComponent<Chunk>());
-//			
-//			chunk = Instantiate(ChunkPrefab);
-//			chunk.transform.SetParent(transform);
-//			chunk.name = "Chunk" + ":" + -1 + ", " + 0;
-//			chunk.GetComponent<Chunk>().SetUpChunk(Map, -1, 0,ChunkLength, ChunkHeight, ChunkWidth );
-//			chunk.GetComponent<Chunk>().GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(-1+Offset.x,0+Offset.y)));
-//			Map.Chunks.Add(chunk.GetComponent<Chunk>());
-
+			_chunkLength = _map.ChunkLength;
+			_chunkHeight = _map.ChunkHeight;
+			_chunkWidth = _map.ChunkWidth;
+			
+			
+//			Debug.Log("x min"+Mathf.FloorToInt((Player.transform.position.x / _chunkLength) - RenderRadius  ));
+//			Debug.Log("z min"+Mathf.FloorToInt((Player.transform.position.z / _chunkWidth) - RenderRadius ));
+//			Debug.Log("x max"+Mathf.FloorToInt((Player.transform.position.x / _chunkLength) + RenderRadius ));
+//			Debug.Log("z max"+Mathf.FloorToInt((Player.transform.position.z / _chunkWidth) + RenderRadius ));
+			
 		}
-		
 
-		private void RecalculateChunks() {
-			if (Map.Chunks.Count > 1) {
-				foreach (Chunk chun in Map.Chunks) {
-					int x = chun.X;
-					int y = chun.Z;
-					chun.GenerateChunk(NoiseGen.GenerateSimplexHeightMap(ChunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(x+Offset.x,y+Offset.y)));
+		public void Update() {
+			for (int x = (int)(Player.transform.position.x / _chunkLength - RenderRadius ); x < (int)(Player.transform.position.x / _chunkLength + RenderRadius ); x++) {
+				for (int z = (int)(Player.transform.position.z / _chunkWidth - RenderRadius ); z < (int)(Player.transform.position.z / _chunkWidth + RenderRadius ); z++) {
+					_chunk = _map.GetChunk(new Vector3(x*_chunkLength , 0, z*_chunkWidth));
+					if (_chunk == null) {
+						GenerateChunk(x, z);
+					}
+					else {
+						
+					}
 				}
 			}
 		}
 		
+		private void GenerateChunk(int xPos, int zPos) {
+				GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
+				chunkGameObject.name = "Chunk" + ":" + xPos + ", " + zPos;
+				chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, xPos, zPos,_chunkLength, _chunkHeight, _chunkWidth );
+				Chunk chunk = chunkGameObject.GetComponent<Chunk>();
+				_map.Chunks.Add(new Vector2Int(xPos,zPos).ToString(), chunk);
+				chunk.GenerateChunk(NoiseGen.Generate2DHeightMap(_chunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(chunk.X+Offset.x,chunk.Z+Offset.y)));
+		}
+
+		private void RenderChunk(int xPos, int zPos) {
+			
+		}
+
+		private void UnrenderChunk(int xPos, int zPos) {
+			
+		}
+		
+				
 		//make sure these variables are not out of bounds
 		public void OnValidate() {
-			if (ChunkWidth < 1) {
-				ChunkWidth = 1;
+			if (_chunkWidth < 1) {
+				_chunkWidth = 1;
 			}
-			if (ChunkLength < 1) {
-				ChunkLength = 1;
+			if (_chunkLength < 1) {
+				_chunkLength = 1;
 			}
-			if (ChunkLength < 1) {
-				ChunkLength = 1;
+			if (_chunkLength < 1) {
+				_chunkLength = 1;
 			}
 			if (Octaves < 0) {
 				Octaves = 0;
 			}
-
-//			ReloadCalculateChunks();
 		}
 
 	}
