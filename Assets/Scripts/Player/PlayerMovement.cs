@@ -9,7 +9,7 @@ namespace Player {
 		public float JumpSpeed = 8.0F;
 		public float Gravity = 20.0F;
 		private Vector3 _moveDirection = Vector3.zero;
-		private int _drawDistance = 4;
+		private int _drawDistance = 8;
 	
 		void Update() {
 			CharacterController controller = GetComponent<CharacterController>();

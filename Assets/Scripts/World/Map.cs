@@ -44,7 +44,7 @@ namespace World {
 
         public void UpdateChunk(Vector3 position) {
 //            Debug.Log("<color=blue>Map ==> Update Chunk ==> x:"+position.x+" z:"+position.z+"</color>");
-            StartCoroutine(GetChunk(position).RenderChunk());
+            StartCoroutine(GetChunk(position).CreateMesh());
 
         }
 
@@ -61,7 +61,7 @@ namespace World {
                             if (block.IsActive) {
                                 
                                 chunk.UpdateBlock((int)pos.x, (int)pos.y, (int)pos.z, BlockDict[0].Id, false);
-                                StartCoroutine(chunk.RenderChunk());
+                                StartCoroutine(chunk.CreateMesh());
                             }
             }
             
@@ -81,7 +81,7 @@ namespace World {
                 if (!block.IsActive) {
 
                     chunk.UpdateBlock((int) pos.x, (int) pos.y, (int) pos.z, BlockDict[blockId].Id, true);
-                    StartCoroutine(chunk.RenderChunk());
+                    StartCoroutine(chunk.CreateMesh());
                 }
             }
 

@@ -73,12 +73,6 @@ namespace World {
             }
 
             GrassifyChunk();
-            CreateMesh();
-        }
-
-        public virtual IEnumerator RenderChunk() {
-            CreateMesh();
-            yield return 0;
         }
 
         public void UpdateBlock(int x, int y , int z, byte id, bool isActive ) { 
@@ -157,7 +151,7 @@ namespace World {
 
         
 
-        private void CreateMesh() {
+        public virtual IEnumerator CreateMesh() {
             if (_mesh == null) {
                 _mesh = GetComponent<MeshFilter>().mesh;
             }
@@ -171,18 +165,11 @@ namespace World {
                     for (int z = 0; z < _sizeZ; z++) {
                         Block block = _blocks[x, y, z];
                         if (block.IsActive) {
-
-                            
-                            // Possibility that we could check if the next chunk 
-//                            int xPosition = X * _sizeX;
-//                            int zPosition = Z * _sizeZ;
-                            
-                            
+                                                     
                             // get the block dictionary so we can check if the blocks are transparent or not
                             //this way we do not have to store the transparancey in the block data structure.
                             BlockDictionary dict = BlockDictionary.Instance;
-                            
-                            
+                                                       
                             if (!GetBlock(x,y-1,z).IsActive || dict.GetBlockType(GetBlock(x,y-1,z).Id).IsTransparent) {
                                 CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
                             }
@@ -206,36 +193,12 @@ namespace World {
                             if (!GetBlock(x,y+1,z).IsActive || dict.GetBlockType(GetBlock(x,y+1,z).Id).IsTransparent) {
                                 CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
                             }
-                            
-//                            if (!GetBlock(x,y-1,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y-1,z)).Id).IsTransparent) {
-//                                CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
-//                            }
-//
-//                            if (!GetBlock(x,y,z-1).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y,z-1)).Id).IsTransparent) {
-//                                CreateCubeLeft(x, y, z, _map.BlockDict[block.Id].LeftId);
-//                            }
-//
-//                            if (!GetBlock(x-1,y,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x-1,y,z)).Id).IsTransparent) {
-//                                CreateCubeFront(x, y, z, _map.BlockDict[block.Id].FrontId);
-//                            }
-//
-//                            if (!GetBlock(x+1,y,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x+1,y,z)).Id).IsTransparent) {
-//                                CreateCubeBack(x, y, z, _map.BlockDict[block.Id].BackId);
-//                            }
-//
-//                            if (!GetBlock(x,y,z+1).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y,z+1)).Id).IsTransparent) {
-//                                CreateCubeRight(x, y, z, _map.BlockDict[block.Id].RightId);
-//                            }
-//
-//                            if (!GetBlock(x,y+1,z).IsActive || dict.GetBlockType(_map.GetBlock(new Vector3(x,y+1,z)).Id).IsTransparent) {
-//                                CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
-//                            }
-                            
+
                         }
                     }
                 }
             }
-             
+            yield return new WaitForFixedUpdate();
             _mesh.vertices = _verticies.ToArray();
             _mesh.triangles = _triangles.ToArray();
             _mesh.uv = _uvs.ToArray();
@@ -243,6 +206,8 @@ namespace World {
             _mesh.RecalculateTangents();
             _collider.sharedMesh = _mesh;
             _faceCounter = 0;
+
+//            yield return 0;
 
         }
 

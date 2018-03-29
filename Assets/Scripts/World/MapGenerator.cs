@@ -56,22 +56,24 @@ namespace World {
 				for (int z = (int)(Player.transform.position.z / _chunkWidth - RenderRadius ); z < (int)(Player.transform.position.z / _chunkWidth + RenderRadius ); z++) {
 					_chunk = _map.GetChunk(new Vector3(x*_chunkLength , 0, z*_chunkWidth));
 					if (_chunk == null) {
-						GenerateChunk(x, z);
+						_chunk = GenerateChunk(x, z);
+						StartCoroutine(_chunk.CreateMesh());
 					}
-					else {
-						
+					else if (!_chunk.gameObject.activeInHierarchy){
+						_chunk.gameObject.SetActive(true);
 					}
 				}
 			}
 		}
 		
-		private void GenerateChunk(int xPos, int zPos) {
-				GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
-				chunkGameObject.name = "Chunk" + ":" + xPos + ", " + zPos;
-				chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, xPos, zPos,_chunkLength, _chunkHeight, _chunkWidth );
-				Chunk chunk = chunkGameObject.GetComponent<Chunk>();
-				_map.Chunks.Add(new Vector2Int(xPos,zPos).ToString(), chunk);
-				chunk.GenerateChunk(NoiseGen.Generate2DHeightMap(_chunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(chunk.X+Offset.x,chunk.Z+Offset.y)));
+		private Chunk GenerateChunk(int xPos, int zPos) {
+			GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
+			chunkGameObject.name = "Chunk" + ":" + xPos + ", " + zPos;
+			chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, xPos, zPos,_chunkLength, _chunkHeight, _chunkWidth );
+			Chunk chunk = chunkGameObject.GetComponent<Chunk>();
+			_map.Chunks.Add(new Vector2Int(xPos,zPos).ToString(), chunk);
+			chunk.GenerateChunk(NoiseGen.Generate2DHeightMap(_chunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(chunk.X+Offset.x,chunk.Z+Offset.y)));
+			return chunk;
 		}
 
 		private void RenderChunk(int xPos, int zPos) {

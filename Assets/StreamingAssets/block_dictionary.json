@@ -212,22 +212,44 @@
 		"Id": 19, 
 		"_Name": "oak leafs",
 		"IsTransparent": true, 
-		"BottomId": 92,
-		"TopId": 92,
-		"FrontId": 92,
-		"BackId": 92,
-		"LeftId": 92,
-		"RightId": 92 
+		"BottomId": 76,
+		"TopId": 76,
+		"FrontId": 76,
+		"BackId": 76,
+		"LeftId": 76,
+		"RightId": 76 
 	},
 	{
 		"Id": 20, 
 		"_Name": "glowstone lamp", 
 		"IsTransparent": false,
-		"BottomId": 92,
-		"TopId": 92,
-		"FrontId": 92,
-		"BackId": 92,
-		"LeftId": 92,
-		"RightId": 92 
+		"BottomId": 153,
+		"TopId": 153,
+		"FrontId": 153,
+		"BackId": 153,
+		"LeftId": 153,
+		"RightId": 153 
+	},
+	{
+		"Id": 21, 
+		"_Name": "birch log", 
+		"IsTransparent": false,
+		"BottomId": 94,
+		"TopId": 94,
+		"FrontId": 88,
+		"BackId": 88,
+		"LeftId": 88,
+		"RightId": 88 
+	},
+	{
+		"Id": 22, 
+		"_Name": "birch leafs",
+		"IsTransparent": true, 
+		"BottomId": 71,
+		"TopId": 71,
+		"FrontId": 71,
+		"BackId": 71,
+		"LeftId": 71,
+		"RightId": 71 
 	}
 ]

@@ -35,7 +35,7 @@ namespace Player {
 			}
 			//quick implimentation of block id changing using the 1 and 2 keys
 			
-			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < Map.BlockDict.Count) {
+			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < Map.BlockDict.Count-1) {
 				Id++;
 			}
 			if (Input.GetKeyDown(KeyCode.Alpha1) && Id > 1) {
