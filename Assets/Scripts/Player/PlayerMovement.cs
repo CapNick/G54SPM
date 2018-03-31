@@ -25,10 +25,10 @@ namespace Player {
 			controller.Move(_moveDirection * Time.deltaTime);
 		}
 
-		private void OnDrawGizmos() {
-			Gizmos.color = new Color(0,255,24,0.2f);
-			Gizmos.DrawCube(transform.position, new Vector3(_drawDistance*16,_drawDistance,_drawDistance*16));
-		}
+//		private void OnDrawGizmos() {
+//			Gizmos.color = new Color(0,255,24,0.2f);
+//			Gizmos.DrawCube(transform.position, new Vector3(_drawDistance*16,_drawDistance,_drawDistance*16));
+//		}
 	}
 }
 

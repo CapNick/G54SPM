@@ -10,7 +10,7 @@ namespace Player {
 		public float Range;
 		[Range(1,15)]
 		public int Id = 1;
-		public bool Debug = true;
+		public bool debug = true;
 		public GameObject blockTrace;
 		public int SelectedBlock;
 		
@@ -20,11 +20,11 @@ namespace Player {
 		// Update is called once per frame
 		void Update () {
 			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
-			if (Debug) {
+			if (debug) {
 				DisplayBlockPlacement(ray);
 			}
 
-			SelectBlockInView();
+//			SelectBlockInView();
 			PlaceBlockTrace(ray);
 			if (Input.GetMouseButtonDown(0)) {
 				PlaceBlock(ray);
@@ -45,7 +45,7 @@ namespace Player {
 
 		private void SelectBlockInView() {
 			if (_destroyPoint != null) {
-				SelectedBlock = Map.GetBlock(_destroyPoint).Id;
+				SelectedBlock = Map.GetBlock(_destroyPoint);
 			}
 		}
 
@@ -147,17 +147,17 @@ namespace Player {
 					}
 					position += normal;
 					
-					UnityEngine.Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
+					Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// add the block
 					
-					UnityEngine.Debug.Log((int)position.x != (int)playerPosition.x && (int)position.y != (int)playerPosition.y && (int)position.z != (int)playerPosition.z);
+//					UnityEngine.Debug.Log((int)position.x != (int)playerPosition.x && (int)position.y != (int)playerPosition.y && (int)position.z != (int)playerPosition.z);
 					
 					if ((int)position.x != (int)playerPosition.x || (int)position.y != (int)playerPosition.y || (int)position.z != (int)playerPosition.z) {
 						Map.AddBlock(position, Id);
 					}
 				}
 				catch (Exception e) {
-					UnityEngine.Debug.Log("BlockController ==> Place Block ERROR: "+e);
+					Debug.Log("BlockController ==> Place Block ERROR: "+e);
 				}	
 			}
 		}
@@ -183,12 +183,12 @@ namespace Player {
 						normal.z = 0;
 					}
 					position -= normal;
-					UnityEngine.Debug.Log("<color=blue>BlockController ==> Remove Block at ("+position.x+","+position.y+","+position.z+")</color>");
+					Debug.Log("<color=blue>BlockController ==> Remove Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// remove the block
 					Map.RemoveBlock(position);
 				}
 				catch (Exception e) {
-					UnityEngine.Debug.Log("BlockController ==> Remove Block ERROR: "+e);
+					Debug.Log("BlockController ==> Remove Block ERROR: "+e);
 				}
 			}
 		}

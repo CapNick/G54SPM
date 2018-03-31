@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Misc;
 using UnityEngine;
 
 
@@ -13,26 +12,41 @@ namespace World {
 		[Range(1,10)]
 		public int RenderRadius = 3;
 		//generation variables
-		[Space, Header("Terrain Generation")]
+		[Header("Terrain Generation")]
 		public int Seed;
+		
+		[Header("Surface Generation")]
 		[Range(1, 8)]
-		public int Octaves;
-		[Range(0f,1f)]
-		public float Persistance;
+		public int SurfaceOctaves;
 		[Range(1f,4f)]
-		public float Lacunarity;
+		public float SurfaceLacunarity;
 		[Range(0f,1f)]
-		public float Strength;
+		public float SurfaceFrequency;
+		[Header("Underground Generation")]
+		[Range(1, 8)]
+		public int UndergroundOctaves;
+		[Range(1f,4f)]
+		public float UndergroundLacunarity;
+		[Range(0f,1f)]
+		public float UndergroundFrequency;
+
+		public FastNoise.NoiseType NType;
+		public FastNoise.FractalType FType;
+		
 		public Vector2 Offset;
-		public NoiseMethodType MethodType;
+
+		public bool Edit = false;
 
 		private int _chunkLength;
 		private int _chunkHeight;
 		private int _chunkWidth;
+		
 		private Chunk _chunk;
 		
 		//store the information on the map including; blocks, width, height, length and seed.W
 		private Map _map;
+		private FastNoise _groundMap;
+		private FastNoise _undergroundMap;
 		
 		public void Start() {
 			if (_map == null) {
@@ -49,38 +63,68 @@ namespace World {
 //			Debug.Log("x max"+Mathf.FloorToInt((Player.transform.position.x / _chunkLength) + RenderRadius ));
 //			Debug.Log("z max"+Mathf.FloorToInt((Player.transform.position.z / _chunkWidth) + RenderRadius ));
 			
-		}
+			_groundMap = new FastNoise(Seed);
+			_groundMap.SetNoiseType(NType);
+			_groundMap.SetFractalType(FType);
+			_groundMap.SetFractalOctaves(SurfaceOctaves);
+			_groundMap.SetFractalLacunarity(SurfaceLacunarity);
+			_groundMap.SetFrequency(SurfaceFrequency);
 
-		public void Update() {
-			for (int x = (int)(Player.transform.position.x / _chunkLength - RenderRadius ); x < (int)(Player.transform.position.x / _chunkLength + RenderRadius ); x++) {
-				for (int z = (int)(Player.transform.position.z / _chunkWidth - RenderRadius ); z < (int)(Player.transform.position.z / _chunkWidth + RenderRadius ); z++) {
-					_chunk = _map.GetChunk(new Vector3(x*_chunkLength , 0, z*_chunkWidth));
-					if (_chunk == null) {
-						_chunk = GenerateChunk(x, z);
-						StartCoroutine(_chunk.CreateMesh());
-					}
-					else if (!_chunk.gameObject.activeInHierarchy){
-						_chunk.gameObject.SetActive(true);
-					}
-				}
-			}
-		}
-		
-		private Chunk GenerateChunk(int xPos, int zPos) {
-			GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
-			chunkGameObject.name = "Chunk" + ":" + xPos + ", " + zPos;
-			chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, xPos, zPos,_chunkLength, _chunkHeight, _chunkWidth );
-			Chunk chunk = chunkGameObject.GetComponent<Chunk>();
-			_map.Chunks.Add(new Vector2Int(xPos,zPos).ToString(), chunk);
-			chunk.GenerateChunk(NoiseGen.Generate2DHeightMap(_chunkLength, Seed, MethodType, Octaves, Persistance, Lacunarity, Strength, new Vector2(chunk.X+Offset.x,chunk.Z+Offset.y)));
-			return chunk;
-		}
+			
+			_undergroundMap = new FastNoise(Seed);
+			_undergroundMap.SetNoiseType(NType);
+			_undergroundMap.SetFractalType(FType);
+			_undergroundMap.SetFractalOctaves(UndergroundOctaves);
+			_undergroundMap.SetFractalLacunarity(UndergroundLacunarity);
+			_undergroundMap.SetFrequency(UndergroundFrequency);
 
-		private void RenderChunk(int xPos, int zPos) {
+			Gen();
 			
 		}
 
-		private void UnrenderChunk(int xPos, int zPos) {
+		private void Gen() {
+			
+
+
+			for (int l = -RenderRadius/2; l  < RenderRadius/2; l++) {
+				for (int w = -RenderRadius/2; w < RenderRadius/2; w++) {
+					for (int h = 0; h < _map.Height / _map.ChunkHeight/2; h++) {
+						GenerateChunk(new Vector3Int(l, h, w));
+
+//						GenerateChunk(new Vector3Int(1, h, 0));
+//						GenerateChunk(new Vector3Int(0, h, 1));
+//						GenerateChunk(new Vector3Int(-1, h, 0));
+//						GenerateChunk(new Vector3Int(0, h, -1));
+//						GenerateChunk(new Vector3Int(-1, h, 1));
+//						GenerateChunk(new Vector3Int(1, h, -1));
+//						GenerateChunk(new Vector3Int(-1, h, -1));
+					}
+				}
+			}
+
+			foreach (var chunk in _map.Chunks.Values) {
+				chunk.CreateMesh();
+			}
+			
+		}
+
+		private Chunk GenerateChunk(Vector3Int pos) {
+			
+			
+			GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
+			chunkGameObject.name = "Chunk" + ":" + pos;
+			chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, pos,_chunkLength, _chunkHeight, _chunkWidth );
+			Chunk chunk = chunkGameObject.GetComponent<Chunk>();
+			_map.Chunks.Add(pos.ToString(), chunk);
+			chunk.GenerateChunk(_undergroundMap, _groundMap);
+			return chunk;
+		}
+
+		private void RenderChunk(int xPos, int yPos, int zPos) {
+			
+		}
+
+		private void UnrenderChunk(int xPos, int yPos, int zPos) {
 			
 		}
 		
@@ -96,8 +140,24 @@ namespace World {
 			if (_chunkLength < 1) {
 				_chunkLength = 1;
 			}
-			if (Octaves < 0) {
-				Octaves = 0;
+			
+			if (Edit) {
+				_groundMap.SetNoiseType(NType);
+				_groundMap.SetFractalType(FType);
+				_groundMap.SetFractalOctaves(SurfaceOctaves);
+				_groundMap.SetFractalLacunarity(SurfaceLacunarity);
+				_groundMap.SetFrequency(SurfaceFrequency);
+				_undergroundMap.SetNoiseType(NType);
+				_undergroundMap.SetFractalType(FType);
+				_undergroundMap.SetFractalOctaves(UndergroundOctaves);
+				_undergroundMap.SetFractalLacunarity(UndergroundLacunarity);
+				_undergroundMap.SetFrequency(UndergroundFrequency);
+				
+				foreach (var chunk in _map.Chunks.Values) {
+					chunk.GenerateChunk(_undergroundMap, _groundMap);
+					chunk.CreateMesh();
+				}
+
 			}
 		}
 

@@ -5,11 +5,10 @@ using UnityEngine;
 using UnityEngine.AI;
 
 namespace World {
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(NavMeshSurface))]
     public class Chunk : MonoBehaviour {
 
-        public int X;
-        public int Z;
+        public Vector3Int Position;
         
         private int _sizeX;
         private int _sizeY;
@@ -17,7 +16,7 @@ namespace World {
 
         private readonly float BlockSize = 1;
         private readonly float TextureSize = 0.0625f;
-        private Block[,,] _blocks;
+        private int[,,] _blocks;
         private Map _map;
         
         //render
@@ -31,12 +30,11 @@ namespace World {
         private List<Vector2Int> _textures;
 
       
-        public void SetUpChunk(Map map, int x, int z, int sizeX, int sizeY, int sizeZ) {
+        public void SetUpChunk(Map map, Vector3Int pos, int sizeX, int sizeY, int sizeZ) {
             //give it the reference to the map object
             _map = map;
             //save world position
-            X = x;
-            Z = z;
+            Position = pos;
             
             //set chunk dimension
             _sizeX = sizeX;
@@ -44,47 +42,49 @@ namespace World {
             _sizeZ = sizeZ;
             
             //set position of chunk
-            transform.position = new Vector3(x * sizeX,0,z * sizeZ);
+            transform.position = new Vector3(pos.x * sizeX,pos.y * sizeY,pos.z * sizeZ);
             
             //block array
-            _blocks = new Block[_sizeX,_sizeY,_sizeZ];
+            _blocks = new int[_sizeX,_sizeY,_sizeZ];
             _verticies = new List<Vector3>();
             _triangles = new List<int>();
             _uvs = new List<Vector2>();
             _collider = GetComponent<MeshCollider> ();
             PoulateTextures();
-            CreateBlocks();
+//            CreateBlocks();
         }
         
-        public void GenerateChunk(float[,] generatedNoiseMap) {
+        public void GenerateChunk(FastNoise undergroundNoise, FastNoise groundNoise) {
             for (int x = 0; x < _sizeX; x++) {
-                for (int y = 0; y < _sizeY; y++) {
-                    for (int z = 0; z < _sizeZ; z++) {
-                        if (y != 0) {
-                            if (Math.Ceiling(generatedNoiseMap[x, z] * _sizeY) + 64  >= y) {
-                                _blocks[x,y,z].IsActive = true;
-                                _blocks[x,y,z].Id = 1;
-//                           Debug.Log("Making Block At: "+x+", "+y+", "+z+" TRUE");   
-//                                Debug.Log(""+Math.Ceiling(generatedNoiseMap[x, z] * _sizeY));
-                            }
+                for (int z = 0; z < _sizeZ; z++) {
+                    for (int y = 0; y < _sizeY; y++) {
+//                        Debug.Log();
+                        if (y == 0 && Position.y == 0){
+                            UpdateBlock(x, y, z, 11);
                         }
+                        else if(undergroundNoise.GetNoise(x+_sizeX*Position.x,y+_sizeY*Position.y,z+_sizeZ*Position.z) > 0) {
+                            UpdateBlock(x, y, z, 1);
+                        }
+                        else {
+                            UpdateBlock(x,y,z, 0);
+                        }
+//                        Debug.Log("("+x+","+y+","+z+") ==> ("+undergroundNoise.GetNoise(x+_sizeX*Position.x,y+_sizeY*Position.y,z+_sizeZ*Position.z)+")");
                     }
                 }
             }
 
-            GrassifyChunk();
+//            GrassifyChunk();
         }
 
-        public void UpdateBlock(int x, int y , int z, byte id, bool isActive ) { 
-            _blocks[x, y, z].Id = id; 
-            _blocks[x, y, z].IsActive = isActive; 
+        public void UpdateBlock(int x, int y , int z, int id) { 
+            _blocks[x, y, z] = id; 
         } 
         
-        public Block GetBlock(int x, int y, int z) {
+        public int GetBlock(int x, int y, int z) {
             if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
                 return _blocks[x, y, z];
             }
-            return new Block(0, false);
+            return 0;
         }
 
 //        public void OnDrawGizmosSelected() {
@@ -97,17 +97,15 @@ namespace World {
             for (int x = 0; x < _sizeX; x++) {
                 for (int z = 0; z < _sizeZ; z++) {
                     for (int y = 0; y < _sizeY; y++) {
-                        if (GetBlock(x,y,z).IsActive && !GetBlock(x,y+1,z).IsActive) {
+                        if (GetBlock(x,y,z) != 0 && GetBlock(x,y+1,z) != 0) {
                             //put the top 3rd and 2nd layer as dirt
                             if (counter < 1) {
-                                _blocks[x,y+1,z].IsActive = true;
-                                _blocks[x,y+1,z].Id = 2;
+                                _blocks[x,y+1,z]= 2;
                                 counter++;
                             }
                             //put the top layer as grass
                             else if (counter < 2){
-                                _blocks[x,y+1,z].IsActive = true;
-                                _blocks[x,y+1,z].Id = 3;
+                                _blocks[x,y+1,z] = 3;
                                 counter++;
                             }
                             else {
@@ -129,29 +127,8 @@ namespace World {
                 }
             }
         }
-
-        private void CreateBlocks() {
-            //initalise the array of block structs
-            for (int x = 0; x < _sizeX; x++) {
-                for (int y = 0; y < _sizeY; y++) {
-                    for (int z = 0; z < _sizeZ; z++) {
-                        if (y == 0) {
-                            _blocks[x,y,z] = new Block(11, true);
-                        }
-                        else if (y < 64) {
-                            _blocks[x,y,z] = new Block(1, true);
-                        }
-                        else {
-                            _blocks[x,y,z] = new Block(0, false);
-                        }
-                    }
-                }
-            }
-        }
-
         
-
-        public virtual IEnumerator CreateMesh() {
+        public void CreateMesh() {
             if (_mesh == null) {
                 _mesh = GetComponent<MeshFilter>().mesh;
             }
@@ -159,56 +136,66 @@ namespace World {
             _triangles.Clear();
             _uvs.Clear();
             _mesh.Clear();
+
+//            Chunk chunkBottom = _map.GetChunk(new Vector3(_sizeX * Position.x, _sizeY * Position.y - 1 ,_sizeZ * Position.z));
+//            Chunk chunkLeft = _map.GetChunk(new Vector3(_sizeX * Position.x, _sizeY * Position.y,_sizeZ * Position.z - 1));
+//            Chunk chunkFront = _map.GetChunk(new Vector3(_sizeX * Position.x - 1, _sizeY * Position.y,_sizeZ * Position.z));
+//            Chunk chunkBack = _map.GetChunk(new Vector3(_sizeX * Position.x + 1, _sizeY * Position.y,_sizeZ * Position.z));
+//            Chunk chunkRight = _map.GetChunk(new Vector3(_sizeX * Position.x, _sizeY * Position.y,_sizeZ * Position.z + 1));
+//            Chunk chunkTop = _map.GetChunk(new Vector3(_sizeX * Position.x, _sizeY * Position.y + 1,_sizeZ * Position.z)); 
             
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
-                        Block block = _blocks[x, y, z];
-                        if (block.IsActive) {
+                        int block = _blocks[x, y, z];
+                        if (block != 0) {
                                                      
                             // get the block dictionary so we can check if the blocks are transparent or not
                             //this way we do not have to store the transparancey in the block data structure.
                             BlockDictionary dict = BlockDictionary.Instance;
-                                                       
-                            if (!GetBlock(x,y-1,z).IsActive || dict.GetBlockType(GetBlock(x,y-1,z).Id).IsTransparent) {
-                                CreateCubeBottom(x, y, z, _map.BlockDict[block.Id].BottomId);
+                            //check if bottom is touching air                           
+                            if (GetBlock(x,y-1,z) == 0 || GetBlock(x,y-1,z) > 0 && dict.GetBlockType(GetBlock(x,y-1,z)).IsTransparent) {
+                                //Botched attempt at getting the blocks to render more efficently over chunks
+//                                if (_map.GetBlock(new Vector3(x + _sizeX * Position.x, y + _sizeY * Position.y - 1,
+//                                        z + _sizeZ * Position.z)) == 0) {
+                                    CreateCubeBottom(x, y, z, _map.BlockDict[block].BottomId);
+//                                }
                             }
 
-                            if (!GetBlock(x,y,z-1).IsActive || dict.GetBlockType(GetBlock(x,y,z-1).Id).IsTransparent) {
-                                CreateCubeLeft(x, y, z, _map.BlockDict[block.Id].LeftId);
+                            if (GetBlock(x,y,z-1) == 0 || GetBlock(x,y,z-1) > 0 && dict.GetBlockType(GetBlock(x,y,z-1)).IsTransparent) {
+                                    CreateCubeLeft(x, y, z, _map.BlockDict[block].LeftId);
                             }
 
-                            if (!GetBlock(x-1,y,z).IsActive || dict.GetBlockType(GetBlock(x-1,y,z).Id).IsTransparent) {
-                                CreateCubeFront(x, y, z, _map.BlockDict[block.Id].FrontId);
+                            if (GetBlock(x-1,y,z) == 0 || GetBlock(x-1,y,z) > 0 && dict.GetBlockType(GetBlock(x-1,y,z)).IsTransparent) {
+                                    CreateCubeFront(x, y, z, _map.BlockDict[block].FrontId);
                             }
 
-                            if (!GetBlock(x+1,y,z).IsActive || dict.GetBlockType(GetBlock(x+1,y,z).Id).IsTransparent) {
-                                CreateCubeBack(x, y, z, _map.BlockDict[block.Id].BackId);
+                            if (GetBlock(x+1,y,z) == 0 || GetBlock(x+1,y,z) > 0 && dict.GetBlockType(GetBlock(x+1,y,z)).IsTransparent) {
+                                    CreateCubeBack(x, y, z, _map.BlockDict[block].BackId);
                             }
 
-                            if (!GetBlock(x,y,z+1).IsActive || dict.GetBlockType(GetBlock(x,y,z+1).Id).IsTransparent) {
-                                CreateCubeRight(x, y, z, _map.BlockDict[block.Id].RightId);
+                            if (GetBlock(x,y,z+1)  == 0 || GetBlock(x,y,z+1) > 0 && dict.GetBlockType(GetBlock(x,y,z+1)).IsTransparent) {
+                                    CreateCubeRight(x, y, z, _map.BlockDict[block].RightId);
                             }
 
-                            if (!GetBlock(x,y+1,z).IsActive || dict.GetBlockType(GetBlock(x,y+1,z).Id).IsTransparent) {
-                                CreateCubeTop(x, y, z, _map.BlockDict[block.Id].TopId);
+                            if (GetBlock(x,y+1,z) == 0 || GetBlock(x,y+1,z) > 0 && dict.GetBlockType(GetBlock(x,y+1,z)).IsTransparent) {
+//                                if (_map.GetBlock(new Vector3(x + _sizeX * Position.x, y + _sizeY * Position.y,
+//                                        z + _sizeZ * Position.z - 1)) == 0) {
+                                    CreateCubeTop(x, y, z, _map.BlockDict[block].TopId);
+//                                }
                             }
-
                         }
                     }
                 }
+
             }
-            yield return new WaitForFixedUpdate();
             _mesh.vertices = _verticies.ToArray();
             _mesh.triangles = _triangles.ToArray();
             _mesh.uv = _uvs.ToArray();
-            _mesh.RecalculateNormals();
             _mesh.RecalculateTangents();
+            _mesh.RecalculateNormals();
             _collider.sharedMesh = _mesh;
             _faceCounter = 0;
-
-//            yield return 0;
-
         }
 
         private void CreateCubeBottom(int x, int y, int z, int id) {
