@@ -9,6 +9,7 @@ namespace World {
     public class Chunk : MonoBehaviour {
 
         public Vector3Int Position;
+        public bool Loaded = false;
         
         private int _sizeX;
         private int _sizeY;
@@ -27,7 +28,7 @@ namespace World {
         private List<Vector3> _verticies;
         private List<int> _triangles;
         private List<Vector2> _uvs;
-        private List<Vector2Int> _textures;
+        private List<Vector2> _textures;
 
       
         public void SetUpChunk(Map map, Vector3Int pos, int sizeX, int sizeY, int sizeZ) {
@@ -54,30 +55,30 @@ namespace World {
 //            CreateBlocks();
         }
         
-        public void GenerateChunk(FastNoise undergroundNoise, FastNoise groundNoise) {
-            for (int x = 0; x < _sizeX; x++) {
-                for (int z = 0; z < _sizeZ; z++) {
-                    for (int y = 0; y < _sizeY; y++) {
-//                        Debug.Log();
-                        if (y == 0 && Position.y == 0){
-                            UpdateBlock(x, y, z, 11);
-                        }
-                        else if(undergroundNoise.GetNoise(x+_sizeX*Position.x,y+_sizeY*Position.y,z+_sizeZ*Position.z) > 0) {
-                            UpdateBlock(x, y, z, 1);
-                        }
-                        else {
-                            UpdateBlock(x,y,z, 0);
-                        }
-//                        Debug.Log("("+x+","+y+","+z+") ==> ("+undergroundNoise.GetNoise(x+_sizeX*Position.x,y+_sizeY*Position.y,z+_sizeZ*Position.z)+")");
-                    }
-                }
+//        public void GenerateChunk(FastNoise noise) {
+//            for (int x = 0; x < _sizeX; x++) {
+//                for (int z = 0; z < _sizeZ; z++) {
+//                    for (int y = 0; y < _sizeY; y++) {
+////                        Debug.Log();
+//                        if (y == 0 && Position.y == 0){
+//                            UpdateBlock(x, y, z, 11);
+//                        }
+//                        else if(noise.GetNoise(x+_sizeX*Position.x,y+_sizeY*Position.y,z+_sizeZ*Position.z) > 0) {
+//                            UpdateBlock(x, y, z, 1);
+//                        }
+//                        else {
+//                            UpdateBlock(x,y,z, 0);
+//                        }
+////                        Debug.Log("("+x+","+y+","+z+") ==> ("+undergroundNoise.GetNoise(x+_sizeX*Position.x,y+_sizeY*Position.y,z+_sizeZ*Position.z)+")");
+//                    }
+//                }
+//            }
+//        }
+
+        public void UpdateBlock(int x, int y , int z, int id) {
+            if ((x < _sizeX && x >= 0) && (y < _sizeY && y >= 0) && (z < _sizeZ && z >= 0)) {
+                _blocks[x, y, z] = id; 
             }
-
-//            GrassifyChunk();
-        }
-
-        public void UpdateBlock(int x, int y , int z, int id) { 
-            _blocks[x, y, z] = id; 
         } 
         
         public int GetBlock(int x, int y, int z) {
@@ -87,47 +88,6 @@ namespace World {
             return 0;
         }
 
-//        public void OnDrawGizmosSelected() {
-//            Gizmos.color = new Color(255,0,0,0.25f);
-//            Gizmos.DrawCube(new Vector3(X*_sizeX/2, _sizeY/2, Z*_sizeZ/2) , new Vector3(_sizeX, _sizeY, _sizeZ));
-//        }
-
-        private void GrassifyChunk() {
-            int counter = 0;
-            for (int x = 0; x < _sizeX; x++) {
-                for (int z = 0; z < _sizeZ; z++) {
-                    for (int y = 0; y < _sizeY; y++) {
-                        if (GetBlock(x,y,z) != 0 && GetBlock(x,y+1,z) != 0) {
-                            //put the top 3rd and 2nd layer as dirt
-                            if (counter < 1) {
-                                _blocks[x,y+1,z]= 2;
-                                counter++;
-                            }
-                            //put the top layer as grass
-                            else if (counter < 2){
-                                _blocks[x,y+1,z] = 3;
-                                counter++;
-                            }
-                            else {
-                                counter = 0;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        //load in textures from atlas
-        private void PoulateTextures() {
-            _textures = new List<Vector2Int>();
-            for (int x = 0; x < 16; x++) {
-                for (int y = 0; y < 16; y++) {
-                    _textures.Add(new Vector2Int(x,y));
-                }
-            }
-        }
-        
         public void CreateMesh() {
             if (_mesh == null) {
                 _mesh = GetComponent<MeshFilter>().mesh;
@@ -196,8 +156,19 @@ namespace World {
             _mesh.RecalculateNormals();
             _collider.sharedMesh = _mesh;
             _faceCounter = 0;
+            Loaded =true;
         }
 
+        //load in textures from atlas
+        private void PoulateTextures() {
+            _textures = new List<Vector2>();
+            for (int x = 0; x < 16; x++) {
+                for (int y = 0; y < 16; y++) {
+                    _textures.Add(new Vector2(x,y));
+                }
+            }
+        }
+        
         private void CreateCubeBottom(int x, int y, int z, int id) {
             //verticies
             _verticies.Add(new Vector3(x, y, z));
@@ -264,7 +235,7 @@ namespace World {
             _faceCounter++;
         }
 
-        private void SetUV(Vector2Int textCoords) {
+        private void SetUV(Vector2 textCoords) {
             //uvs
             _uvs.Add(new Vector2(TextureSize * textCoords.x, TextureSize + TextureSize * textCoords.y));
             _uvs.Add(new Vector2(TextureSize + TextureSize * textCoords.x, TextureSize + TextureSize * textCoords.y));

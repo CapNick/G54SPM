@@ -274,5 +274,54 @@
 		"BackId": 71,
 		"LeftId": 71,
 		"RightId": 71 
+	},
+	{
+		"Id": 23,
+		"_Name": "snow",
+		"IsTransparent": false,
+		"Hardness": 50,
+		"BottomId": 43,
+		"TopId": 43,
+		"FrontId": 43,
+		"BackId": 43,
+		"LeftId": 43,
+		"RightId": 43
+	},
+	{
+		"Id": 24,
+		"_Name": "snowy dirt",
+		"IsTransparent": false,
+		"Hardness": 50,
+		"BottomId": 47,
+		"TopId": 43,
+		"FrontId": 75,
+		"BackId": 75,
+		"LeftId": 75,
+		"RightId": 75
+	},
+	{
+		"Id": 25,
+		"_Name": "lava",
+		"IsTransparent": false,
+		"Hardness": 0,
+		"BottomId": 240,
+		"TopId": 240,
+		"FrontId": 240,
+		"BackId": 240,
+		"LeftId": 240,
+		"RightId": 240
+	},
+	{
+		"Id": 26,
+		"_Name": "water",
+		"IsTransparent": false,
+		"Hardness": 0,
+		"BottomId": 242,
+		"TopId": 242,
+		"FrontId": 242,
+		"BackId": 242,
+		"LeftId": 242,
+		"RightId": 242
 	}
+	
 ]

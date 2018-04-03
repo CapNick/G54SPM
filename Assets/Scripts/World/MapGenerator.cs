@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -9,8 +10,10 @@ namespace World {
 		public GameObject Player;
 		
 		public GameObject ChunkPrefab;
-		[Range(1,10)]
+		[Range(1,25)]
 		public int RenderRadius = 3;
+		[Range(1,50)]
+		public int GenerationRadius = 5;
 		//generation variables
 		[Header("Terrain Generation")]
 		public int Seed;
@@ -22,6 +25,14 @@ namespace World {
 		public float SurfaceLacunarity;
 		[Range(0f,1f)]
 		public float SurfaceFrequency;
+		[Range(-1,1)]
+		public float SurfaceGain = 0.2f;
+
+		public FastNoise.NoiseType SurfaceNoiseType;
+		public FastNoise.FractalType SurfaceFractalType;
+		public FastNoise.Interp SurfaceInterperlation;
+
+		
 		[Header("Underground Generation")]
 		[Range(1, 8)]
 		public int UndergroundOctaves;
@@ -29,106 +40,220 @@ namespace World {
 		public float UndergroundLacunarity;
 		[Range(0f,1f)]
 		public float UndergroundFrequency;
+		[Range(-1,1)]
+		public float UndergroundGain = 0.5f;
 
-		public FastNoise.NoiseType NType;
-		public FastNoise.FractalType FType;
+		public FastNoise.NoiseType UndergroundNoiseType;
+		public FastNoise.FractalType UndergroundFractalType;
+		public FastNoise.Interp UndergroundInterperlation;
 		
 		public Vector2 Offset;
 
-		public bool Edit = false;
+		[Header("Other")]
+		
+		public bool EditMode = false;
+
+		public float NoiseMultiplyer;
+		public AnimationCurve HeightCurve;
 
 		private int _chunkLength;
 		private int _chunkHeight;
 		private int _chunkWidth;
-		
-		private Chunk _chunk;
+		private int _waterLevel;
+		private int _lavalLevel = 3;
+		private List<Chunk> _chunks =new List<Chunk>();
 		
 		//store the information on the map including; blocks, width, height, length and seed.W
 		private Map _map;
 		private FastNoise _groundMap;
 		private FastNoise _undergroundMap;
-		
+		Chunk _chunk;
+
+		private float _min;
+		private float _max;
+
 		public void Start() {
 			if (_map == null) {
 				_map = GetComponent<Map>();
 			}
-			
+
 			_chunkLength = _map.ChunkLength;
 			_chunkHeight = _map.ChunkHeight;
 			_chunkWidth = _map.ChunkWidth;
-			
-			
+			_waterLevel = _map.Height / 2;
+
+
 //			Debug.Log("x min"+Mathf.FloorToInt((Player.transform.position.x / _chunkLength) - RenderRadius  ));
 //			Debug.Log("z min"+Mathf.FloorToInt((Player.transform.position.z / _chunkWidth) - RenderRadius ));
 //			Debug.Log("x max"+Mathf.FloorToInt((Player.transform.position.x / _chunkLength) + RenderRadius ));
 //			Debug.Log("z max"+Mathf.FloorToInt((Player.transform.position.z / _chunkWidth) + RenderRadius ));
-			
 			_groundMap = new FastNoise(Seed);
-			_groundMap.SetNoiseType(NType);
-			_groundMap.SetFractalType(FType);
+
+			_groundMap.SetNoiseType(SurfaceNoiseType);
+			_groundMap.SetFractalType(SurfaceFractalType);
 			_groundMap.SetFractalOctaves(SurfaceOctaves);
 			_groundMap.SetFractalLacunarity(SurfaceLacunarity);
+			_groundMap.SetFractalGain(SurfaceGain);
 			_groundMap.SetFrequency(SurfaceFrequency);
+			_groundMap.SetInterp(SurfaceInterperlation);
 
-			
 			_undergroundMap = new FastNoise(Seed);
-			_undergroundMap.SetNoiseType(NType);
-			_undergroundMap.SetFractalType(FType);
+
+			_undergroundMap.SetNoiseType(UndergroundNoiseType);
+			_undergroundMap.SetFractalType(UndergroundFractalType);
 			_undergroundMap.SetFractalOctaves(UndergroundOctaves);
 			_undergroundMap.SetFractalLacunarity(UndergroundLacunarity);
+			_undergroundMap.SetFractalGain(UndergroundGain);
 			_undergroundMap.SetFrequency(UndergroundFrequency);
+			_undergroundMap.SetInterp(UndergroundInterperlation);
 
-			Gen();
-			
+			Chunk chunk;
+			for (int l = -GenerationRadius / 2; l <= GenerationRadius / 2; l++) {
+				for (int w = -GenerationRadius / 2; w <= GenerationRadius / 2; w++) {
+					for (int h = 0; h < _map.Height / _map.ChunkHeight; h++) {
+
+//						_chunk = CreateChunk(new Vector3Int(0, h, 0));
+						TerraformChunk(CreateChunk(new Vector3Int(l, h, w)));
+//						_chunks.Add(_chunk);						
+					}
+				}
+			}		
 		}
 
-		private void Gen() {
+		public void Update() {
+			if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+				Offset.y++;
+				UpdateChunks();
+			}
+			if (Input.GetKeyDown(KeyCode.RightArrow)) {
+				Offset.y--;
+				UpdateChunks();
+			}
+			if (Input.GetKeyDown(KeyCode.UpArrow)) {
+				Offset.x++;
+				UpdateChunks();
+			}
+			if (Input.GetKeyDown(KeyCode.DownArrow)) {
+				Offset.x--;
+				UpdateChunks();
+			}
 			
-
-
-			for (int l = -RenderRadius/2; l  < RenderRadius/2; l++) {
-				for (int w = -RenderRadius/2; w < RenderRadius/2; w++) {
-					for (int h = 0; h < _map.Height / _map.ChunkHeight/2; h++) {
-						GenerateChunk(new Vector3Int(l, h, w));
-
-//						GenerateChunk(new Vector3Int(1, h, 0));
-//						GenerateChunk(new Vector3Int(0, h, 1));
-//						GenerateChunk(new Vector3Int(-1, h, 0));
-//						GenerateChunk(new Vector3Int(0, h, -1));
-//						GenerateChunk(new Vector3Int(-1, h, 1));
-//						GenerateChunk(new Vector3Int(1, h, -1));
-//						GenerateChunk(new Vector3Int(-1, h, -1));
+			for (int l = -RenderRadius; l <= RenderRadius; l++) {
+				for (int w = -RenderRadius ; w <= RenderRadius; w++) {
+					for (int h = 0; h < _map.Height / _map.ChunkHeight; h++) {
+						Vector3 playerPosition = Player.transform.position;
+						playerPosition.x += l*_chunkLength;
+						playerPosition.z += w*_chunkWidth;
+						_chunk = _map.GetChunk(playerPosition);
+						if (_chunk != null && !_chunk.Loaded) {
+							_map.GetChunk(playerPosition).CreateMesh();
+						}
 					}
 				}
 			}
-
-			foreach (var chunk in _map.Chunks.Values) {
-				chunk.CreateMesh();
-			}
+			
 			
 		}
 
-		private Chunk GenerateChunk(Vector3Int pos) {
-			
-			
+
+		private Chunk CreateChunk(Vector3Int position) {
 			GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
-			chunkGameObject.name = "Chunk" + ":" + pos;
-			chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, pos,_chunkLength, _chunkHeight, _chunkWidth );
+			chunkGameObject.name = "Chunk" + ":" + position;
+			chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, position,_chunkLength, _chunkHeight, _chunkWidth );
 			Chunk chunk = chunkGameObject.GetComponent<Chunk>();
-			_map.Chunks.Add(pos.ToString(), chunk);
-			chunk.GenerateChunk(_undergroundMap, _groundMap);
+			_map.Chunks.Add(position.ToString(), chunk);
 			return chunk;
 		}
 
-		private void RenderChunk(int xPos, int yPos, int zPos) {
-			
-		}
+		private void TerraformChunk(Chunk chunk) {
+			for (int x = 0; x < _chunkLength; x++) {
+				
+				float xCoord = (Offset.x + x + chunk.Position.x*_chunkLength);
+				for (int z = 0; z < _chunkWidth; z++) {
+					
+					float zCoord = (Offset.y + z + chunk.Position.z*_chunkWidth);
+					
+					for (int y = 0; y < _chunkHeight; y++) {
+						chunk.UpdateBlock(x,y,z, 0);
+					}
+					
+					//Underground Generation
+					if (chunk.Position.y * _chunkHeight  < _map.Height / 2) {
+						for (int y = 0; y < _chunkHeight; y++) {
+							float yCoord = y + chunk.Position.y*_chunkHeight;
+							if (chunk.Position.y == 0 && y == 0) {
+								chunk.UpdateBlock(x,y,z,11);
+							}
+							//underground Generation
+							else if (chunk.Position.y * _chunkHeight < _map.Height / 2) {
+								float sample = _undergroundMap.GetNoise(xCoord,yCoord,zCoord);
+								if (sample < -0.5f) {
+									chunk.UpdateBlock(x,y,z,1);							
+								}
 
-		private void UnrenderChunk(int xPos, int yPos, int zPos) {
-			
+							}
+							if (chunk.Position.y == 0 && chunk.GetBlock(x,y,z) == 0 && y < 4 && y != 0) {
+								chunk.UpdateBlock(x,y,z,25);							
+							}
+						}
+					}
+					//Surface Generation
+					else if(chunk.Position.y * _chunkHeight  < _map.Height / 2 + _map.Height / _chunkHeight){
+
+						float sample = HeightCurve.Evaluate(_groundMap.GetNoise(xCoord,zCoord)*NoiseMultiplyer);
+
+						if (sample < _min) {
+							_min = sample;
+						}
+				
+						if (sample > _max) {
+							_max = sample;
+						}
+
+						if (chunk.Position.y * _chunkHeight < _map.Height / 2) {
+							
+						}
+						if (sample < 0) {
+							chunk.UpdateBlock(x,0,z, 26);							
+						}
+						else if(sample < 0.05f) {
+							for (int y = 0; y < Mathf.RoundToInt(_chunkHeight*sample); y++) {
+								chunk.UpdateBlock(x,y,z,1);
+							}
+							chunk.UpdateBlock(x,Mathf.RoundToInt(_chunkHeight*sample),z,16);
+						}
+						else if(sample < 0.2f) {
+							for (int y = 0; y < Mathf.RoundToInt(_chunkHeight*sample); y++) {
+								chunk.UpdateBlock(x,y,z,1);
+							}
+							chunk.UpdateBlock(x,Mathf.RoundToInt(_chunkHeight*sample),z,3);
+						}
+						else if(sample < 0.3f) {
+							for (int y = 0; y < Mathf.RoundToInt(_chunkHeight*sample); y++) {
+								chunk.UpdateBlock(x,y,z,1);
+							}
+							chunk.UpdateBlock(x,Mathf.RoundToInt(_chunkHeight*sample),z,3);
+						}
+						else {
+							for (int y = 0; y < Mathf.RoundToInt(_chunkHeight*sample); y++) {
+								chunk.UpdateBlock(x,y,z,1);
+							}
+							chunk.UpdateBlock(x,Mathf.RoundToInt(_chunkHeight*sample),z,1);
+						}
+						
+
+//						Debug.Log("Height for chunk: "+sample);
+
+
+
+//						Debug.Log("Height "+Mathf.Abs(sample)+", "+Mathf.Abs(sample) % _chunkHeight+", "+ Mathf.Abs(sample) / _chunkHeight);
+					}
+					
+				}
+			}
+//			Debug.Log("Min: "+_min+", Max: "+_max);
 		}
 		
-				
 		//make sure these variables are not out of bounds
 		public void OnValidate() {
 			if (_chunkWidth < 1) {
@@ -140,24 +265,32 @@ namespace World {
 			if (_chunkLength < 1) {
 				_chunkLength = 1;
 			}
-			
-			if (Edit) {
-				_groundMap.SetNoiseType(NType);
-				_groundMap.SetFractalType(FType);
-				_groundMap.SetFractalOctaves(SurfaceOctaves);
-				_groundMap.SetFractalLacunarity(SurfaceLacunarity);
-				_groundMap.SetFrequency(SurfaceFrequency);
-				_undergroundMap.SetNoiseType(NType);
-				_undergroundMap.SetFractalType(FType);
-				_undergroundMap.SetFractalOctaves(UndergroundOctaves);
-				_undergroundMap.SetFractalLacunarity(UndergroundLacunarity);
-				_undergroundMap.SetFrequency(UndergroundFrequency);
-				
-				foreach (var chunk in _map.Chunks.Values) {
-					chunk.GenerateChunk(_undergroundMap, _groundMap);
-					chunk.CreateMesh();
-				}
 
+			if (EditMode) {
+				UpdateChunks();
+			}
+		}
+
+		private void UpdateChunks() {
+			_groundMap.SetSeed(Seed);
+			_groundMap.SetNoiseType(SurfaceNoiseType);
+			_groundMap.SetFractalType(SurfaceFractalType);
+			_groundMap.SetFractalOctaves(SurfaceOctaves);
+			_groundMap.SetFractalLacunarity(SurfaceLacunarity);
+			_groundMap.SetFractalGain(SurfaceGain);
+			_groundMap.SetFrequency(SurfaceFrequency);
+			_groundMap.SetInterp(SurfaceInterperlation);
+			_undergroundMap.SetSeed(Seed);
+			_undergroundMap.SetNoiseType(UndergroundNoiseType);
+			_undergroundMap.SetFractalType(UndergroundFractalType);
+			_undergroundMap.SetFractalOctaves(UndergroundOctaves);
+			_undergroundMap.SetFractalLacunarity(UndergroundLacunarity);
+			_undergroundMap.SetFractalGain(UndergroundGain);
+			_undergroundMap.SetFrequency(UndergroundFrequency);
+			_undergroundMap.SetInterp(UndergroundInterperlation);
+			foreach (Chunk chunk in _chunks) {
+				TerraformChunk(chunk);
+				chunk.CreateMesh();
 			}
 		}
 

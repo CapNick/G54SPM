@@ -9,7 +9,7 @@ namespace Player {
 		public float JumpSpeed = 8.0F;
 		public float Gravity = 20.0F;
 		private Vector3 _moveDirection = Vector3.zero;
-		private int _drawDistance = 8;
+		private int _drawDistance = 16;
 	
 		void Update() {
 			CharacterController controller = GetComponent<CharacterController>();
@@ -25,10 +25,10 @@ namespace Player {
 			controller.Move(_moveDirection * Time.deltaTime);
 		}
 
-//		private void OnDrawGizmos() {
-//			Gizmos.color = new Color(0,255,24,0.2f);
-//			Gizmos.DrawCube(transform.position, new Vector3(_drawDistance*16,_drawDistance,_drawDistance*16));
-//		}
+		private void OnDrawGizmos() {
+			Gizmos.color = new Color(0,255,24,0.2f);
+			Gizmos.DrawSphere(transform.position, _drawDistance/2 * 16);
+		}
 	}
 }
 
