@@ -21,17 +21,16 @@ namespace World {
             BlockDict = BlockDictionary.Instance.GetAllData();
         }
 
-        public Chunk GetChunk(Vector3 position) {
+        public Chunk GetChunk(Vector3 worldPosition) {
             //divide by the chunk width and height to get the chunk position
-            int chunkX = Mathf.FloorToInt(position.x / ChunkLength);
-            int chunkY = Mathf.FloorToInt(position.y / ChunkHeight);
-            int chunkZ = Mathf.FloorToInt(position.z / ChunkWidth);
+            int chunkX = Mathf.FloorToInt(worldPosition.x / ChunkLength);
+            int chunkY = Mathf.FloorToInt(worldPosition.y / ChunkHeight);
+            int chunkZ = Mathf.FloorToInt(worldPosition.z / ChunkWidth);
 //            Debug.Log("<color=blue>Map ==> Get Chunk ==> x:"+chunkX+" y:"+chunkY+" z:"+chunkZ+"</color>");
             string positionKey = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
             if (Chunks.ContainsKey(positionKey)) {
                 return Chunks[positionKey];
             }
-
             return null;
         }
 
@@ -42,11 +41,6 @@ namespace World {
                 return chunk.GetBlock((int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z);
             }
             return 0;
-        }
-
-        public void UpdateChunk(Vector3 position) {
-//            Debug.Log("<color=blue>Map ==> Update Chunk ==> x:"+position.x+" z:"+position.z+"</color>");
-            GetChunk(position).CreateMesh();
         }
 
         public void RemoveBlock(Vector3 worldPosition) {
@@ -61,7 +55,7 @@ namespace World {
                 int block = chunk.GetBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z);
                 if (block != 0) {
                     chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, BlockDict[0].Id);
-                    chunk.CreateMesh();
+                    StartCoroutine(chunk.CreateMesh());
                 }
             }
         }
@@ -80,7 +74,7 @@ namespace World {
                 if (block == 0 && chunkPos.y < Height) {
 
                     chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, BlockDict[blockId].Id);
-                    chunk.CreateMesh();
+                    StartCoroutine(chunk.CreateMesh());
                 }
             }
 

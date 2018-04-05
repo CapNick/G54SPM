@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,13 +8,13 @@ using UnityEngine;
 namespace World {
 	public class MapGenerator : MonoBehaviour {
 
+		[Header("Player Information")]
 		public GameObject Player;
-		
-		public GameObject ChunkPrefab;
+		[Range(1,15)]
+		public int DrawDistance;
 		[Range(1,25)]
-		public int RenderRadius = 3;
-		[Range(1,50)]
-		public int GenerationRadius = 5;
+		public int GenerationDistance;
+		
 		//generation variables
 		[Header("Terrain Generation")]
 		public int Seed;
@@ -51,27 +52,24 @@ namespace World {
 
 		[Header("Other")]
 		
-		public bool EditMode = false;
-
 		public float NoiseMultiplyer;
 		public AnimationCurve HeightCurve;
+		public GameObject ChunkPrefab;
+
+		public int WaterLevel;
+		public int LavalLevel = 3;
 
 		private int _chunkLength;
 		private int _chunkHeight;
 		private int _chunkWidth;
-		private int _waterLevel;
-		private int _lavalLevel = 3;
-		private List<Chunk> _chunks =new List<Chunk>();
 		
 		//store the information on the map including; blocks, width, height, length and seed.W
 		private Map _map;
 		private FastNoise _groundMap;
 		private FastNoise _undergroundMap;
-		Chunk _chunk;
-
-		private float _min;
-		private float _max;
-
+		private IEnumerator _enumerator;
+//		private Chunk _chunk;
+		
 		public void Start() {
 			if (_map == null) {
 				_map = GetComponent<Map>();
@@ -80,15 +78,13 @@ namespace World {
 			_chunkLength = _map.ChunkLength;
 			_chunkHeight = _map.ChunkHeight;
 			_chunkWidth = _map.ChunkWidth;
-			_waterLevel = _map.Height / 2;
-
+			WaterLevel = _map.Height / 2;
 
 //			Debug.Log("x min"+Mathf.FloorToInt((Player.transform.position.x / _chunkLength) - RenderRadius  ));
 //			Debug.Log("z min"+Mathf.FloorToInt((Player.transform.position.z / _chunkWidth) - RenderRadius ));
 //			Debug.Log("x max"+Mathf.FloorToInt((Player.transform.position.x / _chunkLength) + RenderRadius ));
 //			Debug.Log("z max"+Mathf.FloorToInt((Player.transform.position.z / _chunkWidth) + RenderRadius ));
 			_groundMap = new FastNoise(Seed);
-
 			_groundMap.SetNoiseType(SurfaceNoiseType);
 			_groundMap.SetFractalType(SurfaceFractalType);
 			_groundMap.SetFractalOctaves(SurfaceOctaves);
@@ -98,7 +94,6 @@ namespace World {
 			_groundMap.SetInterp(SurfaceInterperlation);
 
 			_undergroundMap = new FastNoise(Seed);
-
 			_undergroundMap.SetNoiseType(UndergroundNoiseType);
 			_undergroundMap.SetFractalType(UndergroundFractalType);
 			_undergroundMap.SetFractalOctaves(UndergroundOctaves);
@@ -106,62 +101,51 @@ namespace World {
 			_undergroundMap.SetFractalGain(UndergroundGain);
 			_undergroundMap.SetFrequency(UndergroundFrequency);
 			_undergroundMap.SetInterp(UndergroundInterperlation);
-
-			Chunk chunk;
-			for (int l = -GenerationRadius / 2; l <= GenerationRadius / 2; l++) {
-				for (int w = -GenerationRadius / 2; w <= GenerationRadius / 2; w++) {
-					for (int h = 0; h < _map.Height / _map.ChunkHeight; h++) {
-
-//						_chunk = CreateChunk(new Vector3Int(0, h, 0));
-						TerraformChunk(CreateChunk(new Vector3Int(l, h, w)));
-//						_chunks.Add(_chunk);						
-					}
-				}
-			}		
+			GenerateChunks();
 		}
 
 		public void Update() {
-			if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-				Offset.y++;
-				UpdateChunks();
-			}
-			if (Input.GetKeyDown(KeyCode.RightArrow)) {
-				Offset.y--;
-				UpdateChunks();
-			}
-			if (Input.GetKeyDown(KeyCode.UpArrow)) {
-				Offset.x++;
-				UpdateChunks();
-			}
-			if (Input.GetKeyDown(KeyCode.DownArrow)) {
-				Offset.x--;
-				UpdateChunks();
-			}
-			
-			for (int l = -RenderRadius; l <= RenderRadius; l++) {
-				for (int w = -RenderRadius ; w <= RenderRadius; w++) {
-					for (int h = 0; h < _map.Height / _map.ChunkHeight; h++) {
-						Vector3 playerPosition = Player.transform.position;
-						playerPosition.x += l*_chunkLength;
-						playerPosition.z += w*_chunkWidth;
-						_chunk = _map.GetChunk(playerPosition);
-						if (_chunk != null && !_chunk.Loaded) {
-							_map.GetChunk(playerPosition).CreateMesh();
+//			GenerateChunks();
+			StartCoroutine(RenderChunks());
+		}
+		
+		public IEnumerator RenderChunks() {
+			Vector3 playerPosition = Player.transform.position;
+			for (int l = -DrawDistance; l <= DrawDistance; l++) {
+				for (int w = -DrawDistance; w <= DrawDistance; w++) {
+					for (int h = 0; h < _map.Height / _chunkHeight; h++) {
+						Chunk chunk = _map.GetChunk(new Vector3(l * _chunkLength + playerPosition.x, h * _chunkHeight, w * _chunkWidth + playerPosition.z));
+						if (chunk != null && !chunk.Loaded && !chunk.Empty) {
+							yield return StartCoroutine(chunk.CreateMesh());	
 						}
 					}
 				}
 			}
-			
-			
 		}
 
+		public void GenerateChunks() {
+			Vector3 playerPosition = Player.transform.position;	
+			for (int l = -GenerationDistance; l <= GenerationDistance; l++) {
+				for (int w = -GenerationDistance; w <= GenerationDistance; w++) {
+					for (int h = 0; h < _map.Height / _chunkHeight; h++) {
+						Chunk chunk = _map.GetChunk(new Vector3(l * _chunkLength + playerPosition.x, h * _chunkHeight, w * _chunkWidth + playerPosition.z));
+						if (chunk == null) {
+//							Debug.Log("("+l+", "+h+", "+w+")");
+							TerraformChunk(CreateChunk(new Vector3Int(l,h,w)));
+						}
+					}
+				}
+			}
+		}
+		
+		
 
 		private Chunk CreateChunk(Vector3Int position) {
 			GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
 			chunkGameObject.name = "Chunk" + ":" + position;
 			chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, position,_chunkLength, _chunkHeight, _chunkWidth );
 			Chunk chunk = chunkGameObject.GetComponent<Chunk>();
-			_map.Chunks.Add(position.ToString(), chunk);
+			_map.Chunks.Add(position.ToString(),chunk);
 			return chunk;
 		}
 
@@ -192,7 +176,7 @@ namespace World {
 								}
 
 							}
-							if (chunk.Position.y == 0 && chunk.GetBlock(x,y,z) == 0 && y < 4 && y != 0) {
+							if (chunk.Position.y == 0 && chunk.GetBlock(x,y,z) == 0 && y < LavalLevel && y != 0) {
 								chunk.UpdateBlock(x,y,z,25);							
 							}
 						}
@@ -202,17 +186,9 @@ namespace World {
 
 						float sample = HeightCurve.Evaluate(_groundMap.GetNoise(xCoord,zCoord)*NoiseMultiplyer);
 
-						if (sample < _min) {
-							_min = sample;
-						}
-				
-						if (sample > _max) {
-							_max = sample;
-						}
-
-						if (chunk.Position.y * _chunkHeight < _map.Height / 2) {
-							
-						}
+//						if (chunk.Position.y * _chunkHeight < _map.Height / 2) {
+//							
+//						}
 						if (sample < 0) {
 							chunk.UpdateBlock(x,0,z, 26);							
 						}
@@ -240,18 +216,11 @@ namespace World {
 							}
 							chunk.UpdateBlock(x,Mathf.RoundToInt(_chunkHeight*sample),z,1);
 						}
-						
-
-//						Debug.Log("Height for chunk: "+sample);
-
-
-
-//						Debug.Log("Height "+Mathf.Abs(sample)+", "+Mathf.Abs(sample) % _chunkHeight+", "+ Mathf.Abs(sample) / _chunkHeight);
 					}
-					
 				}
 			}
-//			Debug.Log("Min: "+_min+", Max: "+_max);
+
+//			yield return null;
 		}
 		
 		//make sure these variables are not out of bounds
@@ -265,34 +234,6 @@ namespace World {
 			if (_chunkLength < 1) {
 				_chunkLength = 1;
 			}
-
-			if (EditMode) {
-				UpdateChunks();
-			}
 		}
-
-		private void UpdateChunks() {
-			_groundMap.SetSeed(Seed);
-			_groundMap.SetNoiseType(SurfaceNoiseType);
-			_groundMap.SetFractalType(SurfaceFractalType);
-			_groundMap.SetFractalOctaves(SurfaceOctaves);
-			_groundMap.SetFractalLacunarity(SurfaceLacunarity);
-			_groundMap.SetFractalGain(SurfaceGain);
-			_groundMap.SetFrequency(SurfaceFrequency);
-			_groundMap.SetInterp(SurfaceInterperlation);
-			_undergroundMap.SetSeed(Seed);
-			_undergroundMap.SetNoiseType(UndergroundNoiseType);
-			_undergroundMap.SetFractalType(UndergroundFractalType);
-			_undergroundMap.SetFractalOctaves(UndergroundOctaves);
-			_undergroundMap.SetFractalLacunarity(UndergroundLacunarity);
-			_undergroundMap.SetFractalGain(UndergroundGain);
-			_undergroundMap.SetFrequency(UndergroundFrequency);
-			_undergroundMap.SetInterp(UndergroundInterperlation);
-			foreach (Chunk chunk in _chunks) {
-				TerraformChunk(chunk);
-				chunk.CreateMesh();
-			}
-		}
-
 	}
 }
