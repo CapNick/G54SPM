@@ -118,6 +118,14 @@ namespace World {
 						if (chunk != null && !chunk.Loaded && !chunk.Empty) {
 							yield return StartCoroutine(chunk.CreateMesh());	
 						}
+						// if the chunk has not been gernerated yet create it and if it is not emptyrender it
+						else if (chunk == null ) {
+							chunk = CreateChunk(new Vector3Int(Mathf.FloorToInt(l + playerPosition.x / _chunkLength), h, Mathf.FloorToInt(w + playerPosition.z/ _chunkWidth)));
+							TerraformChunk(chunk);
+							if (!chunk.Empty) {
+								yield return StartCoroutine(chunk.CreateMesh());	
+							}
+						}
 					}
 				}
 			}
