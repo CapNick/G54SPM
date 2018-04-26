@@ -101,12 +101,13 @@ namespace World {
 			_undergroundMap.SetFractalGain(UndergroundGain);
 			_undergroundMap.SetFrequency(UndergroundFrequency);
 			_undergroundMap.SetInterp(UndergroundInterperlation);
-			GenerateChunks();
+//			GenerateChunks();
 		}
 
 		public void Update() {
 //			GenerateChunks();
 			StartCoroutine(RenderChunks());
+			GenerateChunks();
 		}
 		
 		public IEnumerator RenderChunks() {
@@ -118,19 +119,11 @@ namespace World {
 						if (chunk != null && !chunk.Loaded && !chunk.Empty) {
 							yield return StartCoroutine(chunk.CreateMesh());	
 						}
-						// if the chunk has not been gernerated yet create it and if it is not emptyrender it
-						else if (chunk == null ) {
-							chunk = CreateChunk(new Vector3Int(Mathf.FloorToInt(l + playerPosition.x / _chunkLength), h, Mathf.FloorToInt(w + playerPosition.z/ _chunkWidth)));
-							TerraformChunk(chunk);
-							if (!chunk.Empty) {
-								yield return StartCoroutine(chunk.CreateMesh());	
-							}
-						}
 					}
 				}
 			}
 		}
-
+		// any chunks within this radius will be loaded into the scene or created.
 		public void GenerateChunks() {
 			Vector3 playerPosition = Player.transform.position;	
 			for (int l = -GenerationDistance; l <= GenerationDistance; l++) {
@@ -139,7 +132,7 @@ namespace World {
 						Chunk chunk = _map.GetChunk(new Vector3(l * _chunkLength + playerPosition.x, h * _chunkHeight, w * _chunkWidth + playerPosition.z));
 						if (chunk == null) {
 //							Debug.Log("("+l+", "+h+", "+w+")");
-							TerraformChunk(CreateChunk(new Vector3Int(l,h,w)));
+							TerraformChunk(CreateChunk(new Vector3Int(Mathf.FloorToInt(l + playerPosition.x / _chunkLength), h, Mathf.FloorToInt(w + playerPosition.z/ _chunkWidth))));
 						}
 					}
 				}

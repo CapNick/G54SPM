@@ -5,9 +5,6 @@ using UnityEngine;
 namespace World {
     //Container Class which holds the world information so that it can be saved easilly
     public class Map : MonoBehaviour{
-        public Dictionary<int, BlockType> BlockDict;
-
-        
         [Space, Header("Chunk Information")]
         public Dictionary<string, Chunk> Chunks = new Dictionary<string, Chunk>();
 
@@ -16,17 +13,12 @@ namespace World {
         public int ChunkHeight = 16;
         public int ChunkWidth = 16;
         
-        public void Awake() {
-            BlockDictionary.Instance.LoadAllData("block_dictionary.json");
-            BlockDict = BlockDictionary.Instance.GetAllData();
-        }
-
         public Chunk GetChunk(Vector3 worldPosition) {
             //divide by the chunk width and height to get the chunk position
             int chunkX = Mathf.FloorToInt(worldPosition.x / ChunkLength);
             int chunkY = Mathf.FloorToInt(worldPosition.y / ChunkHeight);
             int chunkZ = Mathf.FloorToInt(worldPosition.z / ChunkWidth);
-//            Debug.Log("<color=blue>Map ==> Get Chunk ==> x:"+chunkX+" y:"+chunkY+" z:"+chunkZ+"</color>");
+            // setting the position 
             string positionKey = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
             if (Chunks.ContainsKey(positionKey)) {
                 return Chunks[positionKey];
@@ -48,13 +40,10 @@ namespace World {
             Chunk chunk = GetChunk(worldPosition);
             if (chunk != null) {
                 Vector3 chunkPos = WorldPosToChunkPos(worldPosition, chunk);
-
-//            Debug.Log("<color=blue>Map ==> Remove Block ==> Pos: (" + (int)pos.x + ", " + (int)pos.y + ", " +
-//                      (int)pos.z+"), Chunk: ("+chunk.Position+")</color>");
                 //set block to air
                 int block = chunk.GetBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z);
                 if (block != 0) {
-                    chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, BlockDict[0].Id);
+                    chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, 0);
                     StartCoroutine(chunk.CreateMesh());
                 }
             }
@@ -66,14 +55,11 @@ namespace World {
             //check if the chunk even exsists
             if (chunk != null) {
                 Vector3 chunkPos = WorldPosToChunkPos(worldPosition, chunk);
-
-//            Debug.Log("<color=blue>Map ==> Add Block ==> ID:" + blockId + ", Pos: (" + (int)pos.x + ", " + (int)pos.y + ", " +
-//                      (int)pos.z+"), Chunk: ("+chunk.Position+")</color>");
                 //set block to air
                 int block = chunk.GetBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z);
                 if (block == 0 && chunkPos.y < Height) {
 
-                    chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, BlockDict[blockId].Id);
+                    chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, blockId);
                     StartCoroutine(chunk.CreateMesh());
                 }
             }
