@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using World;
 
@@ -9,25 +8,27 @@ namespace Player {
 		public Map Map;
 		public Camera Cam;
 		public float Range;
-		public LayerMask Mask;
 		[Range(1,15)]
 		public int Id = 1;
 		public bool Debug = true;
-		public GameObject blockTrace;
+		//outline of that goes around the block
+		public GameObject BlockTrace;
+		//gives the id of theblock the player is looking at
 		public int SelectedBlock;
 		
 		private Vector3 _destroyPoint;
 		private Vector3 _placePoint;
 		
 		// Update is called once per frame
-		void FixedUpdate () {
+		void Update () {
 			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 			if (Debug) {
 				DisplayBlockPlacement(ray);
+				SelectBlockInView();
 			}
 
-			SelectBlockInView();
 			PlaceBlockTrace(ray);
+			
 			if (Input.GetMouseButtonDown(0)) {
 				PlaceBlock(ray);
 			}
@@ -37,7 +38,7 @@ namespace Player {
 			}
 			//quick implimentation of block id changing using the 1 and 2 keys
 			
-			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < 15) {
+			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < BlockDictionary.Instance.GetAllData().Count-1) {
 				Id++;
 			}
 			if (Input.GetKeyDown(KeyCode.Alpha1) && Id > 1) {
@@ -47,8 +48,7 @@ namespace Player {
 
 		private void SelectBlockInView() {
 			if (_destroyPoint != null) {
-				SelectedBlock = Map.GetBlock(_destroyPoint).Id;
-
+				SelectedBlock = Map.GetBlock(_destroyPoint);
 			}
 		}
 
@@ -73,15 +73,15 @@ namespace Player {
 						normal.z = 0;
 					}
 					position -= normal;
-					blockTrace.SetActive(true);
-					blockTrace.transform.position = position;
+					BlockTrace.SetActive(true);
+					BlockTrace.transform.position = position;
 				}
 				catch (Exception) {
 					// ignored
 				}
 			}
 			else {
-				blockTrace.SetActive(false);
+				BlockTrace.SetActive(false);
 			}
 		}
 
@@ -127,11 +127,15 @@ namespace Player {
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, Range, LayerMask.GetMask("World"))) {
 				try {
-//					UnityEngine.Debug.Log("<color=blue>BlockController ==> True Place Block at ("+hit.point.x+","+hit.point.y+","+hit.point.z+")</color>");
 					Vector3 position = new Vector3(
 						Mathf.FloorToInt(hit.point.x), 
 						Mathf.FloorToInt(hit.point.y), 
 						Mathf.FloorToInt(hit.point.z));
+					Vector3 playerPosition = new Vector3(
+						Mathf.FloorToInt(transform.position.x), 
+						Mathf.FloorToInt(transform.position.y), 
+						Mathf.FloorToInt(transform.position.z));
+					
 					Vector3 normal = hit.normal;
 
 					// make sure we are on the outside on the block
@@ -145,9 +149,15 @@ namespace Player {
 						normal.z = 0;
 					}
 					position += normal;
+					
 					UnityEngine.Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// add the block
-					Map.AddBlock(position, Id);
+					
+//					UnityEngine.Debug.Log((int)position.x != (int)playerPosition.x && (int)position.y != (int)playerPosition.y && (int)position.z != (int)playerPosition.z);
+					
+					if ((int)position.x != (int)playerPosition.x || (int)position.y != (int)playerPosition.y || (int)position.z != (int)playerPosition.z) {
+						Map.AddBlock(position, Id);
+					}
 				}
 				catch (Exception e) {
 					UnityEngine.Debug.Log("BlockController ==> Place Block ERROR: "+e);

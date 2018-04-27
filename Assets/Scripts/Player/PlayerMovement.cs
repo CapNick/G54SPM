@@ -23,7 +23,6 @@ namespace Player {
 			_moveDirection.y -= Gravity * Time.deltaTime;
 			controller.Move(_moveDirection * Time.deltaTime);
 		}
-
 	}
 }
 

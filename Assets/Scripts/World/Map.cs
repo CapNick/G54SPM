@@ -5,78 +5,73 @@ using UnityEngine;
 namespace World {
     //Container Class which holds the world information so that it can be saved easilly
     public class Map : MonoBehaviour{
-        public Dictionary<int, BlockType> BlockDict;
-
-        
         [Space, Header("Chunk Information")]
-        public List<Chunk> Chunks = new List<Chunk>();
+        public Dictionary<string, Chunk> Chunks = new Dictionary<string, Chunk>();
+
+        public int Height = 256;
         public int ChunkLength = 16;
         public int ChunkHeight = 16;
         public int ChunkWidth = 16;
         
-        public void Awake() {
-            BlockDictionary.Instance.LoadAllData("block_dictionary.json");
-            BlockDict = BlockDictionary.Instance.GetAllData();
-        }
-
-        public Chunk GetChunk(Vector3 position) {
+        public Chunk GetChunk(Vector3 worldPosition) {
             //divide by the chunk width and height to get the chunk position
-            int chunkX = Mathf.FloorToInt(position.x / ChunkLength);
-            int chunkZ = Mathf.FloorToInt(position.z / ChunkWidth);
-            Debug.Log("<color=blue>Map ==> Get Chunk ==> x:"+chunkX+" z:"+chunkZ+"</color>");
-
-            return Chunks.Find(chunk => chunk.X == chunkX && chunk.Z == chunkZ);
+            int chunkX = Mathf.FloorToInt(worldPosition.x / ChunkLength);
+            int chunkY = Mathf.FloorToInt(worldPosition.y / ChunkHeight);
+            int chunkZ = Mathf.FloorToInt(worldPosition.z / ChunkWidth);
+            // setting the position 
+            string positionKey = new Vector3Int(chunkX,chunkY,chunkZ).ToString();
+            if (Chunks.ContainsKey(positionKey)) {
+                return Chunks[positionKey];
+            }
+            return null;
         }
 
-        public Block GetBlock(Vector3 position) {
-            Chunk chunk = GetChunk(position);
-            Vector3 blockPos = RealPosToChunkPos(position, chunk);
-            return chunk.GetBlock((int)blockPos.x, (int)blockPos.y, (int)blockPos.z);
+        public int GetBlock(Vector3 worldPosition) {
+            Chunk chunk = GetChunk(worldPosition);
+            if (chunk != null) {
+                Vector3 chunkPos = WorldPosToChunkPos(worldPosition, chunk);
+                return chunk.GetBlock((int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z);
+            }
+            return 0;
         }
 
-        public void UpdateChunk(Vector3 position) {
-            Debug.Log("<color=blue>Map ==> Update Chunk ==> x:"+position.x+" z:"+position.z+"</color>");
-            GetChunk(position).RenderChunk();
-        }
-
-        public void RemoveBlock(Vector3 position) {
+        public void RemoveBlock(Vector3 worldPosition) {
             //get the current chunk this block is located on
-            Chunk chunk = GetChunk(position);
-            Vector3 pos = RealPosToChunkPos(position, chunk);
-            
-            Debug.Log("<color=blue>Map ==> Remove Block ==> Pos: (" + pos.x + ", " + pos.y + ", " +
-                      pos.z+"), Chunk: ("+chunk.X+","+chunk.Z+")</color>");
-            //set block to air
-            Block block = chunk.GetBlock((int)pos.x, (int)pos.y, (int)pos.z);
-            if (block.IsActive) {
-                
-                chunk.UpdateBlock((int)pos.x, (int)pos.y, (int)pos.z, BlockDict[0].Id, false);
-                chunk.RenderChunk();
+            Chunk chunk = GetChunk(worldPosition);
+            if (chunk != null) {
+                Vector3 chunkPos = WorldPosToChunkPos(worldPosition, chunk);
+                //set block to air
+                int block = chunk.GetBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z);
+                if (block != 0) {
+                    chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, 0);
+                    StartCoroutine(chunk.CreateMesh());
+                }
             }
         }
 
-        public void AddBlock(Vector3 position, int blockId) {
+        public void AddBlock(Vector3 worldPosition, int blockId) {
             //get the current chunk this block is located on           
-            Chunk chunk = GetChunk(position);
-            Vector3 pos = RealPosToChunkPos(position, chunk);
-            
-            Debug.Log("<color=blue>Map ==> Add Block ==> ID:" + blockId + ", Pos: (" + (int)pos.x + ", " + (int)pos.y + ", " +
-                      (int)pos.z+"), Chunk: ("+chunk.X+","+chunk.Z+")</color>");
-            //set block to air
-            Block block = chunk.GetBlock((int)pos.x, (int)pos.y, (int)pos.z);
-            if (!block.IsActive) {
-                
-                chunk.UpdateBlock((int)pos.x, (int)pos.y, (int)pos.z, BlockDict[blockId].Id, true);
-                chunk.RenderChunk();
+            Chunk chunk = GetChunk(worldPosition);
+            //check if the chunk even exsists
+            if (chunk != null) {
+                Vector3 chunkPos = WorldPosToChunkPos(worldPosition, chunk);
+                //set block to air
+                int block = chunk.GetBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z);
+                if (block == 0 && chunkPos.y < Height) {
+
+                    chunk.UpdateBlock((int) chunkPos.x, (int) chunkPos.y, (int) chunkPos.z, blockId);
+                    StartCoroutine(chunk.CreateMesh());
+                }
             }
-            
+
         }
 
-        private Vector3 RealPosToChunkPos(Vector3 pos, Chunk chunk) {
-            int posX = (int)pos.x - chunk.X * ChunkLength;
-            int posZ = (int)pos.z - chunk.Z * ChunkWidth;
+        private Vector3 WorldPosToChunkPos(Vector3 pos, Chunk chunk) {
+            int posX = (int)pos.x - chunk.Position.x * ChunkLength;
+            int posY = (int)pos.y - chunk.Position.y * ChunkHeight;
+            int posZ = (int)pos.z - chunk.Position.z * ChunkWidth;
             //use math.abs to make sure the value is always positive
-            return new Vector3(Math.Abs(posX), pos.y, Math.Abs(posZ));
+            return new Vector3(Math.Abs(posX), Math.Abs(posY), Math.Abs(posZ));
         }
     }
 }
