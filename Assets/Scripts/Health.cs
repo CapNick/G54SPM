@@ -24,11 +24,27 @@ public class Health : MonoBehaviour {
 
     public void OnCollisionEnter(Collision collision)
     {
-        var hit = collision.gameObject;
-        var health = hit.GetComponent<Health>();
-        if(health != null)
+       /* int layerMask = 1 << 8;
+        layerMask = ~layerMask;
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.Log("Did Hit");
+        }
+        else
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+            Debug.Log("Did not Hit");
+        }*/
+
+        /*
+         if (health != null)
         {
             health.TakeDamage(10);
         }
+        */
     }
 }

@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerMoving))]
+[RequireComponent(typeof(MobMoving))]
 public class PlayerController : MonoBehaviour {
 
-    PlayerMoving moving;
+    MobMoving moving;
     Camera cam;
 	// Use this for initialization
 	void Start () {
         cam = Camera.main;
-        moving = GetComponent<PlayerMoving>();
+        moving = GetComponent<MobMoving>();
 	}
 	
 	// Update is called once per frame

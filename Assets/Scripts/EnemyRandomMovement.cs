@@ -40,7 +40,7 @@ public class EnemyRandomMovement : MonoBehaviour {
         yield return new WaitForSeconds(timeForNewPath);
         GetNewPath();
         validPath = navMeshAgent.CalculatePath(target, path);
-        if (!validPath) Debug.Log("Found an invalid Path");
+        //if (!validPath) Debug.Log("Found an invalid Path");
 
         while (!validPath)
         {
