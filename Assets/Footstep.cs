@@ -5,6 +5,7 @@ using UnityEngine;
 
 
 public class Footstep : MonoBehaviour {
+	public List<AudioClip> SoundClips = new List<AudioClip> ();
 
 	CharacterController cc;
 	// Use this for initialization
@@ -22,3 +23,5 @@ public class Footstep : MonoBehaviour {
 		}
 	}
 }
+
+//if (all same) + object stood on is specific, play that specific audioclip
