@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -68,7 +69,8 @@ namespace World {
 		private FastNoise _groundMap;
 		private FastNoise _undergroundMap;
 		private IEnumerator _enumerator;
-//		private Chunk _chunk;
+		private Queue<Chunk> _chunksRenderQueue = new Queue<Chunk>();
+		private Chunk _chunk;
 		
 		public void Start() {
 			if (_map == null) {
@@ -105,26 +107,26 @@ namespace World {
 		}
 
 		public void Update() {
-//			GenerateChunks();
 			StartCoroutine(RenderChunks());
 			GenerateChunks();
 		}
 		
-		public IEnumerator RenderChunks() {
+		private IEnumerator RenderChunks() {
 			Vector3 playerPosition = Player.transform.position;
 			for (int l = -DrawDistance; l <= DrawDistance; l++) {
 				for (int w = -DrawDistance; w <= DrawDistance; w++) {
 					for (int h = 0; h < _map.Height / _chunkHeight; h++) {
 						Chunk chunk = _map.GetChunk(new Vector3(l * _chunkLength + playerPosition.x, h * _chunkHeight, w * _chunkWidth + playerPosition.z));
-						if (chunk != null && !chunk.Loaded && !chunk.Empty) {
-							yield return StartCoroutine(chunk.CreateMesh());	
+						if (chunk != null && !chunk.Loaded && !chunk.Empty && !chunk.Loading) {
+							yield return StartCoroutine(chunk.CreateMesh());
 						}
 					}
 				}
 			}
 		}
+		
 		// any chunks within this radius will be loaded into the scene or created.
-		public void GenerateChunks() {
+		private void GenerateChunks() {
 			Vector3 playerPosition = Player.transform.position;	
 			for (int l = -GenerationDistance; l <= GenerationDistance; l++) {
 				for (int w = -GenerationDistance; w <= GenerationDistance; w++) {
@@ -144,7 +146,7 @@ namespace World {
 		private Chunk CreateChunk(Vector3Int position) {
 			GameObject chunkGameObject = Instantiate(ChunkPrefab,transform);
 			chunkGameObject.name = "Chunk" + ":" + position;
-			chunkGameObject.GetComponent<Chunk>().SetUpChunk(_map, position,_chunkLength, _chunkHeight, _chunkWidth );
+			chunkGameObject.GetComponent<Chunk>().SetUpChunk(position,_chunkLength, _chunkHeight, _chunkWidth );
 			Chunk chunk = chunkGameObject.GetComponent<Chunk>();
 			_map.Chunks.Add(position.ToString(),chunk);
 			return chunk;
