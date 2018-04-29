@@ -4,47 +4,27 @@ using UnityEngine;
 
 public class Health : MonoBehaviour {
 
-    public const int maxHealth = 100;
-    public int currentHealth = maxHealth;
-
+	public const float maxHealth = 100;
+	public float currentHealth = maxHealth;
+	public GameObject healthbar;
+	public GameObject deathMenu;
 
     //taking damage and reducing health when the player is attacked
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
-        currentHealth = currentHealth - damage;
+        currentHealth -= damage;
+		healthbar.GetComponent<HealthBarController>().ChangeHealth (currentHealth);
         if(currentHealth <= 0)
         {
             currentHealth = 0;
-            Debug.Log("health zero - dead!");
+            //Debug.Log("health zero - dead!");
+			//player's health is zero, game is paused, position reset
+			Time.timeScale = 0;
+			transform.position = new Vector3 (0,70f,0);
+			deathMenu.SetActive(true);
         }
     }
 
-    //damage on collision
 
-    public void OnCollisionEnter(Collision collision)
-    {
-       /* int layerMask = 1 << 8;
-        layerMask = ~layerMask;
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
-        {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
-            Debug.Log("Did not Hit");
-        }*/
-
-        /*
-         if (health != null)
-        {
-            health.TakeDamage(10);
-        }
-        */
-    }
 }

@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+//
+
 public class EnemyRandomMovement : MonoBehaviour {
 
     NavMeshAgent navMeshAgent;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+//https://docs.unity3d.com/ScriptReference/Physics.Raycast.html
+
 [RequireComponent(typeof(NavMeshAgent))]
 public class MobMoving : MonoBehaviour {
 
@@ -10,9 +12,10 @@ public class MobMoving : MonoBehaviour {
 	public GameObject player;
     public float range = 10;
     public float attackRange = 5;
-	public float attackCoolDown = 1f;
-	private float coolDownTimer = 0;
-
+	public float attackCoolDown = 3f;
+	public float Damage = 5f;
+	float coolDownTimer = 0;
+	
     // Use this for initialization
     void Start () {
         agent = GetComponent<NavMeshAgent>();
@@ -26,31 +29,13 @@ public class MobMoving : MonoBehaviour {
 			MoveTo (player.transform.position);
             AttackPlayer();
 		}
-	}
+        AttackTimer();
+    }
 
     public void MoveTo(Vector3 point)
     {
         agent.SetDestination(point);
     }
-
-    /* public void OnTriggerEnter(Collider col)
-	{
-		if (col.transform.CompareTag ("Player"))
-		{
-			player = col.gameObject;
-		}
-	}
-
-	public void OnTriggerExit(Collider col)
-	{
-		Debug.Log ("Not Being Triggered By ... " + col.gameObject.name);
-		if (col.transform.CompareTag ("Player"))
-		{
-			agent.SetDestination (transform.position);
-			player = null;
-		}
-	}
-    */
 
     public void OnDrawGizmos() {
 		if (agent != null) {
@@ -62,19 +47,20 @@ public class MobMoving : MonoBehaviour {
 
     public void AttackPlayer()
     {
-        //Ray ray = new Ray(transform.position,new Vector3(1f,0,0));
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, attackRange))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, attackRange) && coolDownTimer == 0)
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
-            AttackTimer();
+            //Debug.Log("Did Hit");
+			if (hit.transform.CompareTag ("Player")) {
+				hit.transform.GetComponent<Health> ().TakeDamage (Damage);
+			}
         }
         else
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
-            Debug.Log("Did not Hit");
+            //Debug.Log("Did not Hit");
         }
     }
 

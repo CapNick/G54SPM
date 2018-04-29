@@ -7,8 +7,6 @@ public class HealthBarController : MonoBehaviour
 {
 
     private Slider healthBar;
-    public const int maxHealth = 100;
-    public int currentHealth = maxHealth;
 
     // Use this for initialization
     void Start()
@@ -16,11 +14,8 @@ public class HealthBarController : MonoBehaviour
         healthBar = GetComponent<Slider>();
     }
 
-    // Update is called once per frame
-    void Update()
+	public void ChangeHealth(float health)
     {
-        healthBar.value = currentHealth;
+		healthBar.value = health;
     }
-
-
 }
