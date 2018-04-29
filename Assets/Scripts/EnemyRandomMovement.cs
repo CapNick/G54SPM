@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-//
+//Reference -
+//https://www.youtube.com/watch?v=RXB7wKSoupI
 
 public class EnemyRandomMovement : MonoBehaviour {
 

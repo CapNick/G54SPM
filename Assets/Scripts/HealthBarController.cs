@@ -14,6 +14,7 @@ public class HealthBarController : MonoBehaviour
         healthBar = GetComponent<Slider>();
     }
 
+	//changes value of health in health bar UI
 	public void ChangeHealth(float health)
     {
 		healthBar.value = health;

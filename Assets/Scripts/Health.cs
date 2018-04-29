@@ -18,13 +18,25 @@ public class Health : MonoBehaviour {
         if(currentHealth <= 0)
         {
             currentHealth = 0;
-            //Debug.Log("health zero - dead!");
+       
 			//player's health is zero, game is paused, position reset
+		    
 			Time.timeScale = 0;
 			transform.position = new Vector3 (0,70f,0);
 			deathMenu.SetActive(true);
         }
     }
 
+	public void Respawn()
+	{
+		Time.timeScale = 1;
+		deathMenu.SetActive (false);
+		currentHealth = maxHealth;
+		healthbar.GetComponent<HealthBarController>().ChangeHealth (currentHealth);
+	}
 
+	public void Quit()
+	{
+		Application.Quit();
+	}
 }
