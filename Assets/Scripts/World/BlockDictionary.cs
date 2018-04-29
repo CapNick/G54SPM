@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace World {
     public sealed class BlockDictionary {
-        private static volatile BlockDictionary instance;
+        private static volatile BlockDictionary _instance;
         private static object syncRoot = new Object();
         private Dictionary<int, BlockType> blockDict = new Dictionary<int, BlockType>();
         private BlockDictionary() {
@@ -14,13 +14,15 @@ namespace World {
         
         public static BlockDictionary Instance {
             get {
-                if (instance == null) {
+                if (_instance == null) {
                     lock (syncRoot) {
-                        if (instance == null) 
-                            instance = new BlockDictionary();
+                        if (_instance == null) {
+                            _instance = new BlockDictionary();
+                            _instance.LoadAllData("block_dictionary.json");
+                        }
                     }
                 }
-                return instance;
+                return _instance;
             }
         }
         

@@ -10,8 +10,10 @@ namespace Player {
 		public float Range;
 		[Range(1,15)]
 		public int Id = 1;
-		public bool debug = true;
-		public GameObject blockTrace;
+		public bool Debug = true;
+		//outline of that goes around the block
+		public GameObject BlockTrace;
+		//gives the id of theblock the player is looking at
 		public int SelectedBlock;
 		
 		private Vector3 _destroyPoint;
@@ -20,12 +22,13 @@ namespace Player {
 		// Update is called once per frame
 		void Update () {
 			Ray ray = Cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
-			if (debug) {
+			if (Debug) {
 				DisplayBlockPlacement(ray);
+				SelectBlockInView();
 			}
 
-//			SelectBlockInView();
 			PlaceBlockTrace(ray);
+			
 			if (Input.GetMouseButtonDown(0)) {
 				PlaceBlock(ray);
 			}
@@ -35,7 +38,7 @@ namespace Player {
 			}
 			//quick implimentation of block id changing using the 1 and 2 keys
 			
-			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < Map.BlockDict.Count-1) {
+			if (Input.GetKeyDown(KeyCode.Alpha2) && Id < BlockDictionary.Instance.GetAllData().Count-1) {
 				Id++;
 			}
 			if (Input.GetKeyDown(KeyCode.Alpha1) && Id > 1) {
@@ -70,15 +73,15 @@ namespace Player {
 						normal.z = 0;
 					}
 					position -= normal;
-					blockTrace.SetActive(true);
-					blockTrace.transform.position = position;
+					BlockTrace.SetActive(true);
+					BlockTrace.transform.position = position;
 				}
 				catch (Exception) {
 					// ignored
 				}
 			}
 			else {
-				blockTrace.SetActive(false);
+				BlockTrace.SetActive(false);
 			}
 		}
 
@@ -147,7 +150,7 @@ namespace Player {
 					}
 					position += normal;
 					
-					Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
+					UnityEngine.Debug.Log("<color=blue>BlockController ==> Place Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// add the block
 					
 //					UnityEngine.Debug.Log((int)position.x != (int)playerPosition.x && (int)position.y != (int)playerPosition.y && (int)position.z != (int)playerPosition.z);
@@ -157,7 +160,7 @@ namespace Player {
 					}
 				}
 				catch (Exception e) {
-					Debug.Log("BlockController ==> Place Block ERROR: "+e);
+					UnityEngine.Debug.Log("BlockController ==> Place Block ERROR: "+e);
 				}	
 			}
 		}
@@ -183,12 +186,12 @@ namespace Player {
 						normal.z = 0;
 					}
 					position -= normal;
-					Debug.Log("<color=blue>BlockController ==> Remove Block at ("+position.x+","+position.y+","+position.z+")</color>");
+					UnityEngine.Debug.Log("<color=blue>BlockController ==> Remove Block at ("+position.x+","+position.y+","+position.z+")</color>");
 					// remove the block
 					Map.RemoveBlock(position);
 				}
 				catch (Exception e) {
-					Debug.Log("BlockController ==> Remove Block ERROR: "+e);
+					UnityEngine.Debug.Log("BlockController ==> Remove Block ERROR: "+e);
 				}
 			}
 		}

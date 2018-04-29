@@ -10,7 +10,9 @@ namespace World {
 
         public Vector3Int Position;
         public bool Loaded;
+        public bool Loading;
         public bool Empty;
+        public bool Modified;
         
         private int _sizeX;
         private int _sizeY;
@@ -19,7 +21,6 @@ namespace World {
         private readonly float BlockSize = 1;
         private readonly float TextureSize = 0.0625f;
         private int[,,] _blocks;
-        private Map _map;
         
         //render
         private Mesh _mesh;
@@ -32,13 +33,13 @@ namespace World {
         private List<Vector2> _textures;
 
       
-        public void SetUpChunk(Map map, Vector3Int pos, int sizeX, int sizeY, int sizeZ) {
-            //give it the reference to the map object
-            _map = map;
+        public void SetUpChunk(Vector3Int pos, int sizeX, int sizeY, int sizeZ) {
             //save world position
             Position = pos;
             Loaded = false;
-            Empty = true;
+            Loading = false;
+            Modified = false;
+//            Empty = true;
             //set chunk dimension
             _sizeX = sizeX;
             _sizeY = sizeY;
@@ -63,7 +64,8 @@ namespace World {
                 if (id != 0) {
                     Empty = false;                   
                 }
-                _blocks[x, y, z] = id; 
+                _blocks[x, y, z] = id;
+                Modified = true;
             }
         } 
         
@@ -82,6 +84,7 @@ namespace World {
             _triangles.Clear();
             _uvs.Clear();
             _mesh.Clear();
+            BlockDictionary blocks = BlockDictionary.Instance;
             for (int x = 0; x < _sizeX; x++) {
                 for (int y = 0; y < _sizeY; y++) {
                     for (int z = 0; z < _sizeZ; z++) {
@@ -92,27 +95,27 @@ namespace World {
                             
                             //check if bottom is touching air                           
                             if (GetBlock(x,y-1,z) == 0 || GetBlock(x,y-1,z) > 0 && BlockDictionary.Instance.GetBlockType(GetBlock(x,y-1,z)).IsTransparent) {
-                                CreateCubeBottom(x, y, z, _map.BlockDict[block].BottomId);
+                                CreateCubeBottom(x, y, z, blocks.GetBlockType(block).BottomId);
                             }
 
                             if (GetBlock(x,y,z-1) == 0 || GetBlock(x,y,z-1) > 0 && BlockDictionary.Instance.GetBlockType(GetBlock(x,y,z-1)).IsTransparent) {
-                                CreateCubeLeft(x, y, z, _map.BlockDict[block].LeftId);
+                                CreateCubeLeft(x, y, z, blocks.GetBlockType(block).LeftId);
                             }
 
                             if (GetBlock(x-1,y,z) == 0 || GetBlock(x-1,y,z) > 0 && BlockDictionary.Instance.GetBlockType(GetBlock(x-1,y,z)).IsTransparent) {
-                                CreateCubeFront(x, y, z, _map.BlockDict[block].FrontId);
+                                CreateCubeFront(x, y, z, blocks.GetBlockType(block).FrontId);
                             }
 
                             if (GetBlock(x+1,y,z) == 0 || GetBlock(x+1,y,z) > 0 && BlockDictionary.Instance.GetBlockType(GetBlock(x+1,y,z)).IsTransparent) {
-                                CreateCubeBack(x, y, z, _map.BlockDict[block].BackId);
+                                CreateCubeBack(x, y, z, blocks.GetBlockType(block).BackId);
                             }
 
                             if (GetBlock(x,y,z+1)  == 0 || GetBlock(x,y,z+1) > 0 && BlockDictionary.Instance.GetBlockType(GetBlock(x,y,z+1)).IsTransparent) {
-                                CreateCubeRight(x, y, z, _map.BlockDict[block].RightId);
+                                CreateCubeRight(x, y, z, blocks.GetBlockType(block).RightId);
                             }
 
                             if (GetBlock(x,y+1,z) == 0 || GetBlock(x,y+1,z) > 0 && BlockDictionary.Instance.GetBlockType(GetBlock(x,y+1,z)).IsTransparent) {
-                                CreateCubeTop(x, y, z, _map.BlockDict[block].TopId);
+                                CreateCubeTop(x, y, z, blocks.GetBlockType(block).TopId);
                             }
                         }
                     }
@@ -122,12 +125,13 @@ namespace World {
             _mesh.vertices = _verticies.ToArray();
             _mesh.triangles = _triangles.ToArray();
             _mesh.uv = _uvs.ToArray();
-            _mesh.RecalculateTangents();
+//            _mesh.RecalculateTangents();
             _mesh.RecalculateNormals();
             _collider.sharedMesh = _mesh;
             _faceCounter = 0;
+            Loading = false;
             Loaded = true;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForEndOfFrame();
         }
 
         //load in textures from atlas
