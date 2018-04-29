@@ -9,25 +9,25 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class MobMoving : MonoBehaviour {
 
-    NavMeshAgent agent;
-	public GameObject player;
-    public float range = 10;
-    public float attackRange = 5;
-	public float attackCoolDown = 3f;
+    NavMeshAgent _agent;
+	public GameObject Player;
+    public float Range = 10;
+    public float AttackRange = 5;
+	public float AttackCoolDown = 3f;
 	public float Damage = 5f;
-	float coolDownTimer = 0;
+	float _coolDownTimer = 0;
 	
     // Use this for initialization
     void Start () {
-        agent = GetComponent<NavMeshAgent>();
+        _agent = GetComponent<NavMeshAgent>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
-		if (Vector3.Distance(transform.position, player.transform.position ) < range) {
+		if (Vector3.Distance(transform.position, Player.transform.position ) < Range) {
        
-			MoveTo (player.transform.position);
+			MoveTo (Player.transform.position);
             AttackPlayer();
 		}
         AttackTimer();
@@ -35,27 +35,27 @@ public class MobMoving : MonoBehaviour {
 
     public void MoveTo(Vector3 point)
     {
-        agent.SetDestination(point);
+        _agent.SetDestination(point);
     }
 
     public void OnDrawGizmos() {
-		if (agent != null) {
+		if (_agent != null) {
 			Gizmos.color = new Color (255, 0, 0, 0.5f);
-			Gizmos.DrawSphere (transform.position, range);
-			Gizmos.DrawLine (transform.position, agent.destination);
+			Gizmos.DrawSphere (transform.position, Range);
+			Gizmos.DrawLine (transform.position, _agent.destination);
 		}
 	}
 
     public void AttackPlayer()
     {
-        RaycastHit hit;
+        RaycastHit _hit;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, attackRange) && coolDownTimer == 0)
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out _hit, AttackRange) && _coolDownTimer == 0)
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * _hit.distance, Color.yellow);
             //Debug.Log("Did Hit");
-			if (hit.transform.CompareTag ("Player")) {
-				hit.transform.GetComponent<Health> ().TakeDamage (Damage);
+			if (_hit.transform.CompareTag ("Player")) {
+				_hit.transform.GetComponent<Health> ().TakeDamage (Damage);
 			}
         }
         else
@@ -67,19 +67,19 @@ public class MobMoving : MonoBehaviour {
 
 	public void AttackTimer()
 	{
-        if (coolDownTimer == 0)
+        if (_coolDownTimer == 0)
         {
-            coolDownTimer = attackCoolDown;
+            _coolDownTimer = AttackCoolDown;
         }
 
-        if (coolDownTimer > 0)
+        if (_coolDownTimer > 0)
         {
-            coolDownTimer = coolDownTimer - Time.deltaTime;
+            _coolDownTimer -= Time.deltaTime;
         }
 
-		if (coolDownTimer < 0)
+		if (_coolDownTimer < 0)
         {
-            coolDownTimer = 0;
+            _coolDownTimer = 0;
         }
 	}
 }

@@ -4,35 +4,35 @@ using UnityEngine;
 
 public class Health : MonoBehaviour {
 
-	public const float maxHealth = 100;
-	public float currentHealth = maxHealth;
-	public GameObject healthbar;
-	public GameObject deathMenu;
+	public const float MaxHealth = 100;
+	public float CurrentHealth = MaxHealth;
+	public GameObject Healthbar;
+	public GameObject DeathMenu;
 
     //taking damage and reducing health when the player is attacked
 
     public void TakeDamage(float damage)
     {
-        currentHealth -= damage;
-		healthbar.GetComponent<HealthBarController>().ChangeHealth (currentHealth);
-        if(currentHealth <= 0)
+        CurrentHealth -= damage;
+		Healthbar.GetComponent<HealthBarController>().ChangeHealth (CurrentHealth);
+        if(CurrentHealth <= 0)
         {
-            currentHealth = 0;
+            CurrentHealth = 0;
        
 			//player's health is zero, game is paused, position reset
 		    
 			Time.timeScale = 0;
 			transform.position = new Vector3 (0,70f,0);
-			deathMenu.SetActive(true);
+			DeathMenu.SetActive(true);
         }
     }
 
 	public void Respawn()
 	{
 		Time.timeScale = 1;
-		deathMenu.SetActive (false);
-		currentHealth = maxHealth;
-		healthbar.GetComponent<HealthBarController>().ChangeHealth (currentHealth);
+		DeathMenu.SetActive (false);
+		CurrentHealth = MaxHealth;
+		Healthbar.GetComponent<HealthBarController>().ChangeHealth (CurrentHealth);
 	}
 
 	public void Quit()

@@ -7,24 +7,24 @@ using UnityEngine.AI;
 
 public class EnemyRandomMovement : MonoBehaviour {
 
-    NavMeshAgent navMeshAgent;
-    NavMeshPath path;
-    public float timeForNewPath;
-    bool inCoRoutine;
-    Vector3 target;
-    bool validPath;
+    NavMeshAgent _navMeshAgent;
+    NavMeshPath _path;
+    public float TimeForNewPath;
+    bool _inCoRoutine;
+    Vector3 _target;
+    bool _validPath;
 
     // Use this for initialization
     void Start () {
-        navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-        path = new NavMeshPath();
+        _navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+        _path = new NavMeshPath();
     }
 
  
 
     // Update is called once per frame
     void Update () {
-        if (!inCoRoutine)
+        if (!_inCoRoutine)
             StartCoroutine(MoveAround());
     }
 
@@ -33,30 +33,30 @@ public class EnemyRandomMovement : MonoBehaviour {
         float x = Random.Range(-20, 20);
         float z = Random.Range(-20, 20);
 
-        Vector3 pos = new Vector3(x, 0, z);
-        return pos;
+        Vector3 _pos = new Vector3(x, 0, z);
+        return _pos;
     }
 
     IEnumerator MoveAround()
     {
-        inCoRoutine = true;
-        yield return new WaitForSeconds(timeForNewPath);
+        _inCoRoutine = true;
+        yield return new WaitForSeconds(TimeForNewPath);
         GetNewPath();
-        validPath = navMeshAgent.CalculatePath(target, path);
+        _validPath = _navMeshAgent.CalculatePath(_target, _path);
         //if (!validPath) Debug.Log("Found an invalid Path");
 
-        while (!validPath)
+        while (!_validPath)
         {
             yield return new WaitForSeconds(0.01f);
             GetNewPath();
-            validPath = navMeshAgent.CalculatePath(target, path);
+            _validPath = _navMeshAgent.CalculatePath(_target, _path);
         }
-        inCoRoutine = false;
+        _inCoRoutine = false;
     }
 
     void GetNewPath()
     {
-        target = getNewRandomPosition();
-        navMeshAgent.SetDestination(target);
+        _target = getNewRandomPosition();
+        _navMeshAgent.SetDestination(_target);
     }
 }

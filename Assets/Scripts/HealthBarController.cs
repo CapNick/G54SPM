@@ -6,17 +6,17 @@ using UnityEngine.UI;
 public class HealthBarController : MonoBehaviour
 {
 
-    private Slider healthBar;
+    private Slider _healthBar;
 
     // Use this for initialization
     void Start()
     {
-        healthBar = GetComponent<Slider>();
+        _healthBar = GetComponent<Slider>();
     }
 
 	//changes value of health in health bar UI
 	public void ChangeHealth(float health)
     {
-		healthBar.value = health;
+		_healthBar.value = health;
     }
 }

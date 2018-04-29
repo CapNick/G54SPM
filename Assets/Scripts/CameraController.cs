@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
-	public float minimumX = -60f;
-	public float maximumX = 60f;
-	public float minimumY = -360f;
-	public float maximumY = 360f;
+	public float MinimumX = -60f;
+	public float MaximumX = 60f;
+	public float MinimumY = -360f;
+	public float MaximumY = 360f;
 
-	public float sensitivityX = 15f;
-	public float sensitivityY = 15f;
+	public float SensitivityX = 15f;
+	public float SensitivityY = 15f;
 
-	public Camera cam;
+	public Camera Cam;
 
-	float rotationY = 0f;
-	float rotationx = 0f;
+	float _rotationY = 0f;
+	float _rotationx = 0f;
 
 	// Use this for initialization
 	void Start () 
@@ -32,12 +32,12 @@ public class CameraController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		rotationY += Input.GetAxis ("Mouse X") * sensitivityY;
-		rotationx += Input.GetAxis ("Mouse Y") * sensitivityX;
+		_rotationY += Input.GetAxis ("Mouse X") * SensitivityY;
+		_rotationx += Input.GetAxis ("Mouse Y") * SensitivityX;
 
-		rotationx = Mathf.Clamp (rotationx, minimumX, maximumX);
+		_rotationx = Mathf.Clamp (_rotationx, MinimumX, MaximumX);
 
-		transform.localEulerAngles = new Vector3 (0, rotationY, 0);
-		cam.transform.localEulerAngles = new Vector3 (-rotationx, 0, 0);
+		transform.localEulerAngles = new Vector3 (0, _rotationY, 0);
+		Cam.transform.localEulerAngles = new Vector3 (-_rotationx, 0, 0);
 	}
 }

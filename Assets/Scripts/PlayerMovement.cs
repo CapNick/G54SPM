@@ -5,14 +5,14 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
 
-	public float walkSpeed;
+	public float WalkSpeed;
 
-	Rigidbody rb;
-	Vector3 MoveDirection;
+	Rigidbody _rb;
+	Vector3 _moveDirection;
 
 	void Awake()
 	{
-		rb = GetComponent<Rigidbody>();
+		_rb = GetComponent<Rigidbody>();
 	}
 
 	// Use this for initialization
@@ -23,10 +23,10 @@ public class PlayerMovement : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		float horizontalMovement = Input.GetAxisRaw ("Horizontal");
-		float verticalMovement = Input.GetAxisRaw ("Vertical");
+		float _horizontalMovement = Input.GetAxisRaw ("Horizontal");
+		float _verticalMovement = Input.GetAxisRaw ("Vertical");
 
-		MoveDirection = (horizontalMovement * transform.right + verticalMovement * transform.forward).normalized;
+		_moveDirection = (_horizontalMovement * transform.right + _verticalMovement * transform.forward).normalized;
 		Move ();
 	}
 
@@ -37,8 +37,8 @@ public class PlayerMovement : MonoBehaviour {
 
 	void Move() 
 	{
-		Vector3 yVelFix = new Vector3 (0, rb.velocity.y, 0);
-		rb.velocity = MoveDirection * walkSpeed * Time.deltaTime;
-		rb.velocity += yVelFix;
+		Vector3 _yVelFix = new Vector3 (0, _rb.velocity.y, 0);
+		_rb.velocity = _moveDirection * WalkSpeed * Time.deltaTime;
+		_rb.velocity += _yVelFix;
 	}
 }
