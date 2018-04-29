@@ -9,9 +9,9 @@ public class MobMoving : MonoBehaviour {
     NavMeshAgent agent;
 	public GameObject player;
     public float range = 10;
-    public float attackRange = 2;
+    public float attackRange = 5;
 	public float attackCoolDown = 1f;
-	private float CoolDownTimer = 0;
+	private float coolDownTimer = 0;
 
     // Use this for initialization
     void Start () {
@@ -69,6 +69,7 @@ public class MobMoving : MonoBehaviour {
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
             Debug.Log("Did Hit");
+            AttackTimer();
         }
         else
         {
@@ -79,6 +80,19 @@ public class MobMoving : MonoBehaviour {
 
 	public void AttackTimer()
 	{
-		
+        if (coolDownTimer == 0)
+        {
+            coolDownTimer = attackCoolDown;
+        }
+
+        if (coolDownTimer > 0)
+        {
+            coolDownTimer = coolDownTimer - Time.deltaTime;
+        }
+
+		if (coolDownTimer < 0)
+        {
+            coolDownTimer = 0;
+        }
 	}
 }
