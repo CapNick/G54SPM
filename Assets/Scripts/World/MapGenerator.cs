@@ -188,10 +188,6 @@ namespace World {
 					else if(chunk.Position.y * _chunkHeight  < _map.Height / 2 + _map.Height / _chunkHeight){
 
 						float sample = HeightCurve.Evaluate(_groundMap.GetNoise(xCoord,zCoord)*NoiseMultiplyer);
-
-//						if (chunk.Position.y * _chunkHeight < _map.Height / 2) {
-//							
-//						}
 						if (sample < 0) {
 							chunk.UpdateBlock(x,0,z, 26);							
 						}
@@ -219,6 +215,8 @@ namespace World {
 							}
 							chunk.UpdateBlock(x,Mathf.RoundToInt(_chunkHeight*sample),z,1);
 						}
+						
+						Features.Tree.CreateTreeType1(_map, new Vector3(8,65, 8), 22, 21);
 					}
 				}
 			}

@@ -5,7 +5,7 @@ namespace Player {
 	public class PlayerMovement : MonoBehaviour 
 
 	{
-		public Animator animator;
+		public Animator Animator;
 		public float Speed = 6.0F;
 		public float JumpSpeed = 8.0F;
 		public float Gravity = 20.0F;
@@ -23,8 +23,8 @@ namespace Player {
 					_moveDirection.y = JumpSpeed;
 				}
 			}
-			Debug.Log (controller.velocity.magnitude);
-			animator.SetFloat("Speed", controller.velocity.magnitude);
+//			Debug.Log (controller.velocity.magnitude);
+			Animator.SetFloat("Speed", controller.velocity.magnitude);
 			_moveDirection.y -= Gravity * Time.deltaTime;
 			controller.Move(_moveDirection * Time.deltaTime);
 		}
