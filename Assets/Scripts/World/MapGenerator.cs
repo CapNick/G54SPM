@@ -216,8 +216,10 @@ namespace World {
 							chunk.UpdateBlock(x,Mathf.RoundToInt(_chunkHeight*sample),z,1);
 						}
 						
-						Features.Tree.CreateTreeType1(_map, new Vector3(8,65, 8), 22, 21);
 					}
+					
+					//						Features.Tree.CreateTreeType1(_map, new Vector3(8,65, 8), 22, 21);
+
 				}
 			}
 
