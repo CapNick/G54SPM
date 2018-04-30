@@ -5,6 +5,7 @@ using UnityEngine;
 
 
 public class Footstep : MonoBehaviour {
+	public List<AudioClip> SoundClips = new List<AudioClip> ();
 
 	CharacterController cc;
 	// Use this for initialization
@@ -19,6 +20,10 @@ public class Footstep : MonoBehaviour {
 		if (cc.isGrounded == true && cc.velocity.magnitude > 2f && GetComponent<AudioSource>().isPlaying == false) 
 		{
 			GetComponent<AudioSource>().Play();
+			//FindObjectOfType<SFXAudioManager>().play("Grass_step");
+
 		}
 	}
 }
+
+//if (all same) + object stood on is specific, play that specific audioclip
